@@ -143,6 +143,67 @@ function Plot({
   return <BookWorkPointPlot points={points} marker={marker ?? points[0] ?? [0, 0]} />;
 }
 
+function BookVoltageChain({
+  emf,
+  voltageDrop,
+  dropRatio
+}: {
+  emf: number;
+  voltageDrop: number;
+  dropRatio: number;
+}) {
+  const barX = 58;
+  const barY = 62;
+  const barWidth = 404;
+  const splitX = barX + barWidth * (1 - dropRatio);
+  const nodes = [
+    ["T_L↑", "负载"],
+    ["I↑", "电流"],
+    ["IR↑", "压降"],
+    ["E↓", "反电动势"],
+    ["ω↓", "转速"]
+  ];
+
+  return (
+    <svg className="steady-book-chain-svg" viewBox="0 0 520 210" role="img" aria-label="稳态负载变化的电压分配和因果链线稿">
+      <defs>
+        <marker id="steady-chain-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" className="book-circuit-arrow-head" />
+        </marker>
+      </defs>
+
+      <rect x="16" y="16" width="488" height="178" rx="4" className="steady-book-chain-panel" />
+      <text x="260" y="42" textAnchor="middle" className="steady-book-chain-title">电压分配：V = E + IR</text>
+
+      <rect x={barX} y={barY} width={barWidth} height="22" className="steady-book-voltage-bar" />
+      <line x1={splitX} y1={barY} x2={splitX} y2={barY + 22} className="steady-book-voltage-split" />
+      <path d={`M ${barX} 92 H ${splitX}`} className="steady-book-voltage-guide" />
+      <path d={`M ${splitX} 92 H ${barX + barWidth}`} className="steady-book-voltage-guide steady-book-voltage-guide--drop" />
+      <text x={barX} y="116" className="steady-book-chain-label">E {formatNumber(emf, 0)}V</text>
+      <text x={splitX + 10} y="116" className="steady-book-chain-label">IR {formatNumber(voltageDrop, 0)}V</text>
+
+      {nodes.map(([top, bottom], index) => {
+        const x = 42 + index * 92;
+        const y = 136;
+        const width = 66;
+        const height = 38;
+        const centerY = y + height / 2;
+
+        return (
+          <g key={top}>
+            <rect x={x} y={y} width={width} height={height} rx="3" className="steady-book-chain-node" />
+            <text x={x + width / 2} y={y + 16} textAnchor="middle" className="steady-book-chain-node-text">{top}</text>
+            <text x={x + width / 2} y={y + 31} textAnchor="middle" className="steady-book-chain-node-subtext">{bottom}</text>
+            {index < nodes.length - 1 ? (
+              <line x1={x + width + 8} y1={centerY} x2={x + 86} y2={centerY} className="steady-book-chain-arrow" markerEnd="url(#steady-chain-arrow)" />
+            ) : null}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 export default function SteadyStateCurveDemo() {
   const [playing, setPlaying] = useState(true);
   const [V, setV] = useState(240);
@@ -192,6 +253,7 @@ export default function SteadyStateCurveDemo() {
       <div className="demo-split">
         <div className="mechanism-stack">
           <BookSteadyMotor angle={time * Math.max(12, omega * 0.12)} current={current} omega={omega} />
+          <BookVoltageChain emf={E} voltageDrop={voltageDrop} dropRatio={dropRatio} />
           <svg className="steady-cause-svg" viewBox="0 0 520 210" role="img" aria-label="稳态负载变化的电压分配和因果链">
             <ArrowDefs />
             <rect x="16" y="16" width="488" height="178" rx="20" fill="#ffffff" stroke="var(--border)" />

@@ -151,6 +151,7 @@
 .figure-commutation-svg,
 .steady-book-motor-svg,
 .steady-book-plot-svg,
+.steady-book-chain-svg,
 .equivalent-book-svg,
 .figure34-svg,
 .figure-role-svg,
@@ -899,9 +900,82 @@
 }
 
 .steady-book-motor-svg,
-.steady-book-plot-svg {
+.steady-book-plot-svg,
+.steady-book-chain-svg {
   min-height: 360px;
   background: #f8fafc;
+}
+
+.steady-book-chain-svg + .steady-cause-svg {
+  display: none;
+}
+
+.steady-book-chain-svg {
+  min-height: 210px;
+}
+
+.steady-book-chain-panel {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 1.5;
+}
+
+.steady-book-chain-title,
+.steady-book-chain-label,
+.steady-book-chain-node-text,
+.steady-book-chain-node-subtext {
+  fill: #111827;
+  font-weight: 800;
+}
+
+.steady-book-chain-title {
+  font-size: 15px;
+}
+
+.steady-book-chain-label {
+  font-size: 14px;
+}
+
+.steady-book-voltage-bar {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 1.8;
+}
+
+.steady-book-voltage-split {
+  stroke: #111827;
+  stroke-width: 1.5;
+}
+
+.steady-book-voltage-guide {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 1.4;
+}
+
+.steady-book-voltage-guide--drop {
+  stroke-dasharray: 5 4;
+}
+
+.steady-book-chain-node {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 1.6;
+}
+
+.steady-book-chain-node-text {
+  font-size: 13px;
+}
+
+.steady-book-chain-node-subtext {
+  font-size: 12px;
+}
+
+.steady-book-chain-arrow {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 1.7;
+  stroke-linecap: round;
 }
 
 .steady-book-flux {
@@ -1670,6 +1744,7 @@
   .figure-commutation-svg,
   .steady-book-motor-svg,
   .steady-book-plot-svg,
+  .steady-book-chain-svg,
   .equivalent-book-svg,
   .figure34-svg,
   .figure-role-svg,
@@ -1701,11 +1776,16 @@
   }
 
   .steady-book-motor-svg,
-  .steady-book-plot-svg {
+  .steady-book-plot-svg,
+  .steady-book-chain-svg {
     width: 100%;
     height: auto;
     min-height: 0;
     aspect-ratio: 560 / 330;
+  }
+
+  .steady-book-chain-svg {
+    aspect-ratio: 520 / 210;
   }
 
   .equivalent-book-svg {
