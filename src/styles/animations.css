@@ -1,0 +1,1663 @@
+.demo-frame {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+  .demo-frame.is-paused .flux-line,
+  .demo-frame.is-paused .current-arrow,
+  .demo-frame.is-paused .flow-line,
+  .demo-frame.is-paused .series-current-line,
+  .demo-frame.is-paused .series-flow-arrow,
+  .demo-frame.is-paused .figure-flux-line,
+  .demo-frame.is-paused .figure35-compensation,
+  .demo-frame.is-paused .figure32-flux,
+  .demo-frame.is-paused .figure32-flux-outer,
+  .demo-frame.is-paused .emf-flux-line {
+    animation-play-state: paused;
+  }
+
+.demo-frame__canvas {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 360px;
+  display: grid;
+  place-items: stretch;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+}
+
+.demo-frame__status {
+  min-height: 30px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: var(--ink);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.demo-frame__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.demo-frame__sliders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.parameter-slider {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.parameter-slider__top,
+.parameter-slider__range {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.parameter-slider__top span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.parameter-slider__top strong {
+  margin-right: 6px;
+  color: var(--blue);
+  font-family: var(--font-mono);
+}
+
+.parameter-slider__top code {
+  flex-shrink: 0;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.parameter-slider input[type="range"] {
+  width: 100%;
+  accent-color: var(--blue);
+}
+
+.parameter-slider__range {
+  color: var(--muted);
+}
+
+.readout,
+.unit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  min-height: 34px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.readout strong,
+.unit-badge__value {
+  font-family: var(--font-mono);
+  font-weight: 900;
+}
+
+.readout--blue { background: #dbeafe; color: var(--blue); border-color: #bfdbfe; }
+.readout--red { background: #fee2e2; color: var(--red); border-color: #fecaca; }
+.readout--green { background: #d1fae5; color: #047857; border-color: #a7f3d0; }
+.readout--amber { background: #fef3c7; color: #b45309; border-color: #fde68a; }
+.readout--purple { background: #ede9fe; color: var(--purple); border-color: #ddd6fe; }
+
+.motor-svg,
+.motion-emf-svg,
+.circuit-svg,
+.plot-svg,
+.chain-svg,
+.quadrant-svg,
+.sankey-svg,
+.reaction-svg,
+.compare-circuit-svg,
+.gauge-svg,
+.micro-svg,
+.mini-wave-svg,
+.load-step-svg,
+.series-demo-svg,
+.commutation-model-svg,
+.figure-commutation-svg,
+.equivalent-book-svg,
+.figure34-svg,
+.figure-role-svg,
+.figure-emf-motor-svg,
+.figure32-svg {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+}
+
+.demo-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+  gap: 12px;
+  min-width: 0;
+  height: 100%;
+}
+
+.demo-split > * {
+  min-width: 0;
+}
+
+.mechanism-stack,
+.curve-stack {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  height: 100%;
+}
+
+.steady-cause-svg {
+  width: 100%;
+  min-height: 170px;
+}
+
+.triple-curves {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.svg-label {
+  fill: var(--ink);
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.svg-axis-label,
+.svg-small-labels text,
+.chain-text,
+.quadrant-label {
+  fill: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.current-mark {
+  fill: var(--red);
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.motor-part-label,
+.terminal-label {
+  fill: var(--ink);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.terminal-label {
+  fill: var(--red);
+  font-family: var(--font-mono);
+  font-size: 22px;
+}
+
+.commutation-board {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+
+.commutation-model-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.commutation-main-panel,
+.commutation-side-panel {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.commutation-side-panel {
+  fill: #f8fafc;
+}
+
+.commutation-pole {
+  stroke-width: 2.5;
+}
+
+.commutation-pole--n {
+  fill: #dbeafe;
+  stroke: var(--blue);
+}
+
+.commutation-pole--s {
+  fill: #fee2e2;
+  stroke: var(--red);
+}
+
+.commutation-coil {
+  fill: rgba(255, 255, 255, 0.84);
+  stroke: #94a3b8;
+  stroke-width: 9;
+}
+
+.commutation-coil-current,
+.commutation-wave,
+.commutation-comp-arrow,
+.commutation-force {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.commutation-coil-current {
+  stroke: var(--red);
+  stroke-width: 7;
+}
+
+.commutation-active-side {
+  fill: #e2e8f0;
+  stroke: #64748b;
+  stroke-width: 2;
+}
+
+.commutation-segment {
+  stroke: #92400e;
+  stroke-width: 2;
+}
+
+.commutation-segment--a {
+  fill: #fde68a;
+}
+
+.commutation-segment--b {
+  fill: #fed7aa;
+}
+
+.commutation-shaft {
+  fill: #f8fafc;
+  stroke: #94a3b8;
+  stroke-width: 4;
+}
+
+.commutation-brush {
+  fill: #334155;
+}
+
+.commutation-short-highlight {
+  fill: rgba(245, 158, 11, 0.18);
+  stroke: var(--amber);
+  stroke-width: 4;
+}
+
+.commutation-interpole {
+  fill: #ede9fe;
+  stroke: var(--purple);
+  stroke-width: 2.5;
+}
+
+.commutation-comp-arrow {
+  stroke: var(--purple);
+  stroke-width: 4;
+}
+
+.commutation-force {
+  stroke: var(--green);
+  stroke-width: 7;
+}
+
+.commutation-torque-label {
+  fill: #047857;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.commutation-side-label,
+.commutation-current-text,
+.commutation-stage-text,
+.commutation-stage-index,
+.commutation-explain-title,
+.commutation-explain-text,
+.commutation-warning-label,
+.commutation-note-text,
+.commutation-mini-label {
+  font-weight: 900;
+}
+
+.commutation-side-label {
+  fill: var(--ink);
+  font-size: 14px;
+}
+
+.commutation-current-text {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 17px;
+}
+
+.commutation-warning-label {
+  fill: #b45309;
+  font-size: 14px;
+}
+
+.commutation-note-band {
+  fill: #f1f5f9;
+}
+
+.commutation-note-text {
+  fill: var(--ink);
+  font-size: 17px;
+}
+
+.commutation-stage-card {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.commutation-stage-card.is-active {
+  fill: #d1fae5;
+  stroke: var(--green);
+}
+
+.commutation-stage-index {
+  fill: var(--green);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.commutation-stage-text {
+  fill: var(--ink);
+  font-size: 15px;
+}
+
+.commutation-wave {
+  stroke: var(--red);
+  stroke-width: 5;
+}
+
+.commutation-wave.is-warning {
+  stroke: var(--amber);
+}
+
+.commutation-mini-label {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.commutation-explain-card {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.commutation-explain-title {
+  fill: var(--ink);
+  font-size: 15px;
+}
+
+.commutation-explain-text {
+  fill: var(--muted);
+  font-size: 14px;
+}
+
+.figure-commutation-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.figure-panel {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.figure-field-block {
+  fill: #eef2f7;
+  stroke: #94a3b8;
+  stroke-width: 2;
+}
+
+.figure-field-divider {
+  stroke: #cbd5e1;
+  stroke-width: 2;
+}
+
+.figure-pole-label {
+  fill: var(--ink);
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.figure-flux-line {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 4;
+  stroke-dasharray: 9 10;
+  stroke-linecap: round;
+  opacity: 0.62;
+  animation: dash-flow 1.8s linear infinite;
+}
+
+.figure-supply-arrow {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.figure-brush {
+  fill: #334155;
+}
+
+.figure-small-label,
+.figure-warning-text,
+.figure-note {
+  fill: var(--muted);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.figure-rotor-outline {
+  fill: rgba(255, 255, 255, 0.72);
+  stroke: #64748b;
+  stroke-width: 2.5;
+}
+
+.figure-coil-track {
+  fill: none;
+  stroke: #64748b;
+  stroke-width: 4;
+}
+
+.figure-coil-current {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.figure-coil-current--soft {
+  opacity: 0.66;
+}
+
+.figure-commutator-base {
+  fill: #fef3c7;
+  stroke: #b45309;
+  stroke-width: 3;
+}
+
+.figure-commutator-segment {
+  fill: #fde68a;
+  stroke: #92400e;
+  stroke-width: 2;
+}
+
+.figure-commutator-segment--alt {
+  fill: #fed7aa;
+}
+
+.figure-commutator-segment.is-short {
+  fill: #fbbf24;
+}
+
+.figure-shaft {
+  fill: #f8fafc;
+  stroke: #94a3b8;
+  stroke-width: 3;
+}
+
+.figure-coil-spoke {
+  stroke: #94a3b8;
+  stroke-width: 3;
+  stroke-dasharray: 6 8;
+}
+
+.figure-side-current {
+  fill: #fee2e2;
+  stroke: var(--red);
+  stroke-width: 3;
+}
+
+.figure-side-zero {
+  fill: #ffffff;
+  stroke: #cbd5e1;
+  stroke-width: 3;
+}
+
+.figure-current-label,
+.figure-side-name,
+.figure-side-current-text,
+.figure-stage-text,
+.figure-torque-text {
+  font-weight: 900;
+}
+
+.figure-current-label {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+
+.figure-side-name {
+  fill: var(--ink);
+  font-size: 18px;
+}
+
+.figure-side-current-text {
+  fill: var(--red);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.figure-torque-arrow {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+}
+
+.figure-torque-text {
+  fill: #047857;
+  font-size: 15px;
+}
+
+.figure-short-ring {
+  fill: rgba(245, 158, 11, 0.18);
+  stroke: var(--amber);
+  stroke-width: 4;
+}
+
+.figure-warning-text {
+  fill: #b45309;
+}
+
+.figure-interpole {
+  fill: #ede9fe;
+  stroke: var(--purple);
+  stroke-width: 2.5;
+}
+
+.figure-interpole-arrow {
+  fill: none;
+  stroke: var(--purple);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.figure-stage {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.figure-stage.is-active {
+  fill: #d1fae5;
+  stroke: var(--green);
+}
+
+.figure-stage-text {
+  fill: var(--ink);
+  font-size: 15px;
+}
+
+.figure-note {
+  fill: var(--ink);
+  font-size: 16px;
+}
+
+.figure34-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.figure34-panel {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.figure34-field {
+  fill: #e7e5e4;
+  stroke: #111827;
+  stroke-width: 1.6;
+}
+
+.figure34-pole {
+  fill: #111827;
+  font-size: 42px;
+  font-weight: 800;
+}
+
+.figure34-terminal,
+.figure34-inner-arrow,
+.figure34-spoke,
+.figure35-callout,
+.figure35-compensation {
+  fill: none;
+  stroke: #111827;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.figure34-terminal {
+  stroke-width: 3.5;
+}
+
+.figure34-brush {
+  fill: #57534e;
+}
+
+.figure34-airgap {
+  fill: rgba(255, 255, 255, 0.66);
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.figure34-coil-track {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2.2;
+}
+
+.figure34-inner-arrow {
+  stroke-width: 2.4;
+}
+
+.figure34-commutator-segment {
+  fill: #e7e5e4;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.figure34-commutator-segment.is-short {
+  fill: #d6d3d1;
+}
+
+.figure34-shaft {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 2.5;
+}
+
+.figure34-spoke {
+  stroke: #94a3b8;
+  stroke-width: 2;
+  stroke-dasharray: 7 6;
+}
+
+.figure34-current-circle,
+.figure34-side-zero {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.figure34-side-zero {
+  stroke: #78716c;
+}
+
+.figure34-dot,
+.figure34-arrow-head,
+.figure34-spark {
+  fill: #111827;
+}
+
+.figure34-cross {
+  stroke: #111827;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.figure34-zero-text {
+  fill: #57534e;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.figure34-side-label,
+.figure34-stage-text,
+.figure34-caption,
+.figure35-caption,
+.figure35-label {
+  fill: #111827;
+  font-weight: 900;
+}
+
+.figure34-side-label {
+  font-size: 15px;
+}
+
+.figure34-short-ring {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2.2;
+  stroke-dasharray: 5 4;
+}
+
+.figure34-spark {
+  opacity: 0.76;
+}
+
+.figure34-stage {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 1.8;
+}
+
+.figure34-stage.is-active {
+  fill: #e7e5e4;
+  stroke: #111827;
+}
+
+.figure34-stage-text {
+  font-size: 13px;
+}
+
+.figure34-caption,
+.figure35-caption {
+  font-size: 15px;
+}
+
+.figure35-box {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 1.7;
+}
+
+.figure35-yoke,
+.figure35-slot,
+.figure35-interpole,
+.figure35-inner-gap,
+.figure35-window {
+  fill: #e5e5e5;
+  stroke: #111827;
+  stroke-width: 1.35;
+}
+
+.figure35-slot,
+.figure35-interpole,
+.figure35-window {
+  fill: #ffffff;
+}
+
+.figure35-axis {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 1.2;
+  stroke-linecap: square;
+}
+
+.figure35-coil {
+  stroke: #111827;
+  stroke-width: 1.25;
+}
+
+.figure35-coil path {
+  fill: #ffffff;
+}
+
+.figure35-coil.is-active path {
+  fill: #e7e5e4;
+}
+
+.figure35-hatch-lines {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 0.85;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.figure35-compensation {
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+  opacity: 0;
+  animation: dash-flow 1.4s linear infinite;
+}
+
+.figure35-compensation.is-active {
+  opacity: 0.55;
+}
+
+.figure35-callout {
+  stroke-width: 1.5;
+}
+
+.figure35-label {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.commutation-explain-board {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.commutation-principle {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.commutation-principle span {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 900;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.figure-role-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.figure-emf-motor-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.equivalent-book-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.book-circuit {
+  color: #111827;
+}
+
+.book-circuit-wire,
+.book-circuit-current-arrow,
+.book-circuit-voltage-arrow,
+.book-circuit-source-arrow {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.book-circuit-current-arrow,
+.book-circuit-voltage-arrow,
+.book-circuit-source-arrow {
+  stroke-width: 2;
+}
+
+.book-circuit-arrow-head {
+  fill: #111827;
+}
+
+.book-circuit-terminal {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 2.2;
+}
+
+.book-circuit-resistor {
+  fill: #f5f5f4;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.book-circuit-source {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 2.2;
+}
+
+.book-circuit-label,
+.book-circuit-symbol,
+.book-circuit-caption {
+  fill: #111827;
+  font-weight: 800;
+}
+
+.book-circuit-label {
+  font-size: 18px;
+}
+
+.book-circuit-symbol {
+  font-size: 20px;
+  font-style: italic;
+}
+
+.book-circuit-caption {
+  font-size: 20px;
+}
+
+.emf-field-block {
+  fill: #e7e5e4;
+  stroke: #111827;
+  stroke-width: 1.6;
+}
+
+.emf-flux-line {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 4;
+  stroke-dasharray: 8 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: dash-flow 1.8s linear infinite;
+}
+
+.emf-conductor {
+  fill: #f8fafc;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.emf-motion-arrow {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.emf-voltage-box {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 1.7;
+}
+
+.emf-voltage-text {
+  fill: #111827;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.role-field {
+  fill: #e7e5e4;
+  stroke: #111827;
+  stroke-width: 1.6;
+}
+
+.role-slip-ring {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.role-slip-ring--inner {
+  stroke-width: 1.5;
+}
+
+.role-side-label {
+  fill: #111827;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.role-torque-arrow {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.role-torque-arrow--reverse {
+  stroke-dasharray: 7 5;
+}
+
+.figure32-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.figure32-panel {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.figure32-outer {
+  fill: #f5f5f4;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.figure32-inner-outline {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 1.8;
+  stroke-dasharray: 9 5;
+}
+
+.figure32-pm-pole,
+.figure32-pole-core {
+  fill: #e7e5e4;
+  stroke: #111827;
+  stroke-width: 1.8;
+}
+
+.figure32-pole-text {
+  fill: #111827;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.figure32-pole-sub {
+  fill: #111827;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.figure32-rotor {
+  fill: #fafafa;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.figure32-shaft {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 3;
+}
+
+.figure32-flux,
+.figure32-flux-outer {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.figure32-flux {
+  stroke-dasharray: 10 6;
+  animation: dash-flow 2.2s linear infinite;
+}
+
+.figure32-flux-outer {
+  stroke-dasharray: 7 5;
+  animation: dash-flow 2.6s linear infinite;
+}
+
+.figure32-conductor {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 1.8;
+}
+
+.figure32-force {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+
+.figure32-coil-turn {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+}
+
+.figure32-caption {
+  fill: #111827;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.figure32-center-torque {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.figure32-center-text {
+  fill: var(--green);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.figure32-note {
+  fill: var(--ink);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.flux-line,
+.current-arrow,
+.motion-arrow,
+.torque-arrow,
+.force-arrow,
+.flow-line,
+.loss-line {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.flux-line {
+  stroke: var(--blue);
+  stroke-dasharray: 10 12;
+  animation: dash-flow 1.8s linear infinite;
+}
+
+.current-arrow {
+  stroke: var(--red);
+}
+
+.motion-arrow,
+.torque-arrow,
+.force-arrow {
+  stroke: var(--green);
+}
+
+.torque-arrow {
+  stroke-width: 7;
+}
+
+.flow-line {
+  stroke: var(--green);
+  stroke-width: 12;
+  opacity: 0.7;
+}
+
+.loss-line {
+  stroke: var(--amber);
+  stroke-width: 8;
+  opacity: 0.8;
+}
+
+.spark {
+  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+}
+
+.axis-line {
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.plot-line {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.plot-line--blue,
+.curve-main {
+  stroke: var(--blue);
+}
+
+.plot-line--red {
+  stroke: var(--red);
+}
+
+.plot-line--green {
+  stroke: var(--green);
+}
+
+.plot-line--purple {
+  stroke: var(--purple);
+}
+
+.plot-line--amber {
+  stroke: var(--amber);
+}
+
+.curve-main,
+.curve-muted {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.curve-muted {
+  stroke: #94a3b8;
+  opacity: 0.7;
+}
+
+.plot-marker,
+.workpoint {
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+.plot-marker--blue { fill: var(--blue); }
+.plot-marker--red { fill: var(--red); }
+.plot-marker--green,
+.workpoint--green { fill: var(--green); }
+.plot-marker--purple,
+.workpoint--purple { fill: var(--purple); }
+.plot-marker--amber { fill: var(--amber); }
+
+.chain-node {
+  fill: #f8fafc;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.chain-node.is-active {
+  fill: #d1fae5;
+  stroke: var(--green);
+}
+
+.chain-arrow {
+  stroke: #cbd5e1;
+  stroke-width: 4;
+}
+
+.chain-arrow.is-active {
+  stroke: var(--green);
+}
+
+.flow-box {
+  stroke-width: 2;
+}
+
+.flow-box--blue { fill: #dbeafe; stroke: var(--blue); }
+.flow-box--purple { fill: #ede9fe; stroke: var(--purple); }
+.flow-box--green { fill: #d1fae5; stroke: var(--green); }
+.flow-box--amber { fill: #fef3c7; stroke: var(--amber); }
+
+.needle {
+  stroke: var(--green);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.zone-labels {
+  padding: 0 2px;
+}
+
+.zone-labels span {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.stage-chip {
+  fill: #f8fafc;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.stage-chip.is-active {
+  fill: #d1fae5;
+  stroke: var(--green);
+}
+
+.danger-chip {
+  fill: #fef3c7;
+  stroke: var(--amber);
+  stroke-width: 2;
+}
+
+.stage-chip-text {
+  fill: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.load-torque-arrow {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.torque-arrow--em {
+  stroke: var(--green);
+}
+
+.response-line {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.response-line--load {
+  stroke: var(--amber);
+}
+
+.response-line--torque {
+  stroke: var(--green);
+}
+
+.response-line--omega {
+  stroke: var(--green);
+}
+
+.response-line--current {
+  stroke: var(--red);
+}
+
+.legend {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.legend--load {
+  fill: var(--amber);
+}
+
+.legend--omega {
+  fill: var(--green);
+}
+
+.legend--current {
+  fill: var(--red);
+}
+
+.legend--torque {
+  fill: var(--green);
+}
+
+.series-current-line,
+.series-flow-arrow {
+  fill: none;
+  stroke: var(--red);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.series-current-line {
+  stroke-width: 5;
+}
+
+.series-flow-arrow {
+  stroke-width: 6;
+}
+
+.series-i-label,
+.series-rule {
+  fill: var(--ink);
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.danger-text {
+  fill: var(--amber);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.load-board {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.82fr) minmax(250px, 1.08fr) minmax(140px, 0.58fr);
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 12px;
+}
+
+.load-panel,
+.load-chain,
+.load-curve {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.load-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 10px;
+}
+
+.load-panel h3 {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+.load-panel p {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.load-panel svg {
+  width: 100%;
+  height: 100%;
+  min-height: 198px;
+}
+
+.load-chain {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+}
+
+.load-chain__node {
+  display: grid;
+  place-items: center;
+  min-height: 56px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.load-chain__node strong {
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.load-chain__node span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.load-chain__node.is-active {
+  border-color: #a7f3d0;
+  background: #d1fae5;
+}
+
+.load-curve {
+  grid-column: 1 / -1;
+  padding: 8px 12px 12px;
+}
+
+.load-curve svg {
+  width: 100%;
+  min-height: 150px;
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -44;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flux-line {
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .demo-split,
+  .triple-curves {
+    grid-template-columns: 1fr;
+  }
+
+  .load-board {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .load-chain,
+  .load-curve {
+    grid-column: 1;
+  }
+
+  .load-chain {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .demo-frame__sliders {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-frame__canvas {
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 720px) {
+  .demo-frame {
+    padding: 12px;
+  }
+
+  .demo-frame__canvas {
+    min-height: 280px;
+  }
+
+  .motor-svg,
+  .motion-emf-svg,
+  .circuit-svg,
+  .plot-svg,
+  .chain-svg,
+  .quadrant-svg,
+  .sankey-svg,
+  .reaction-svg,
+  .compare-circuit-svg,
+  .gauge-svg,
+  .micro-svg,
+  .commutation-model-svg,
+  .figure-commutation-svg,
+  .equivalent-book-svg,
+  .figure34-svg,
+  .figure-role-svg,
+  .figure-emf-motor-svg,
+  .figure32-svg {
+    min-height: 230px;
+  }
+
+  .load-step-svg,
+  .series-demo-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1040 / 640;
+  }
+
+  .commutation-model-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 610 / 500;
+  }
+
+  .figure-commutation-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 760 / 480;
+  }
+
+  .equivalent-book-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 720 / 360;
+  }
+
+  .figure34-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 760 / 480;
+  }
+
+  .figure-role-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 560 / 360;
+  }
+
+  .figure-emf-motor-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 560 / 360;
+  }
+
+  .figure32-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 960 / 520;
+  }
+
+  .load-board {
+    padding: 10px;
+  }
+
+  .load-chain {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .demo-frame__readouts {
+    align-items: flex-start;
+  }
+
+  .commutation-principle {
+    grid-template-columns: 1fr;
+  }
+
+  .commutation-principle span {
+    padding: 7px 9px;
+    font-size: 14px;
+  }
+}
