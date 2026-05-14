@@ -1,7 +1,26 @@
 import { useState } from "react";
 import { convertedPower, copperLoss } from "../utils/motorMath";
-import { percent } from "../utils/format";
-import { ArrowDefs, DemoFrame, Readout, useDemoClock } from "./shared";
+import { formatNumber, percent } from "../utils/format";
+import { DemoFrame, Readout, useDemoClock } from "./shared";
+
+type PowerNodeProps = {
+  x: number;
+  y: number;
+  title: string;
+  value: number;
+  formula: string;
+};
+
+function PowerNode({ x, y, title, value, formula }: PowerNodeProps) {
+  return (
+    <g transform={`translate(${x} ${y})`}>
+      <rect width="150" height="72" rx="8" className="performance-book-node" />
+      <text x="75" y="27" textAnchor="middle" className="performance-book-title">{title}</text>
+      <text x="75" y="50" textAnchor="middle" className="performance-book-value">{formatNumber(value, 0)} W</text>
+      <text x="75" y="90" textAnchor="middle" className="performance-book-formula">{formula}</text>
+    </g>
+  );
+}
 
 export default function PerformanceCalculatorDemo() {
   const [playing, setPlaying] = useState(true);
@@ -18,10 +37,11 @@ export default function PerformanceCalculatorDemo() {
   const pconv = convertedPower(E, I);
   const pout = Math.max(0, pconv - loss);
   const efficiency = pin > 0 ? pout / pin : 0;
+  const validConversion = E > 0;
 
   return (
     <DemoFrame
-      status="输入功率沿能量流分成铜耗、转换功率和轴输出"
+      status={validConversion ? "功率先扣铜耗，再由 EI 转换并扣机械损耗" : "当前参数使 E≤0，已不适合按电动输出估算"}
       playing={playing}
       onToggle={() => setPlaying((value) => !value)}
       onReset={reset}
@@ -29,7 +49,7 @@ export default function PerformanceCalculatorDemo() {
         { label: "电压", symbol: "V", value: V, min: 80, max: 400, step: 10, unit: "V", onChange: setV },
         { label: "电阻", symbol: "R", value: R, min: 0.2, max: 5, step: 0.1, unit: "Ω", onChange: setR },
         { label: "电流", symbol: "I", value: I, min: 1, max: 100, step: 1, unit: "A", onChange: setI },
-        { label: "电机常数", symbol: "k", value: k, min: 0.5, max: 4, step: 0.1, unit: "", onChange: setK },
+        { label: "电势常数", symbol: "k", value: k, min: 0.5, max: 4, step: 0.1, unit: "", onChange: setK },
         { label: "机械损耗", symbol: "loss", value: loss, min: 0, max: 2000, step: 50, unit: "W", onChange: setLoss }
       ]}
       readouts={
@@ -40,24 +60,36 @@ export default function PerformanceCalculatorDemo() {
         </>
       }
     >
-      <svg className="sankey-svg" viewBox="0 0 760 310" role="img" aria-label="直流电机能量流仪表盘">
-        <ArrowDefs />
-        <rect x="44" y="92" width="140" height="72" rx="18" className="flow-box flow-box--blue" />
-        <text x="114" y="122" textAnchor="middle" className="svg-label">输入 VI</text>
-        <text x="114" y="150" textAnchor="middle" className="svg-axis-label">{Math.round(pin)} W</text>
-        <path d="M 184 128 H 292" className="flow-line" markerEnd="url(#arrow-green)" />
-        <rect x="292" y="92" width="150" height="72" rx="18" className="flow-box flow-box--purple" />
-        <text x="367" y="122" textAnchor="middle" className="svg-label">转换 EI</text>
-        <text x="367" y="150" textAnchor="middle" className="svg-axis-label">{Math.round(pconv)} W</text>
-        <path d="M 442 128 H 550" className="flow-line" markerEnd="url(#arrow-green)" />
-        <rect x="550" y="92" width="150" height="72" rx="18" className="flow-box flow-box--green" />
-        <text x="625" y="122" textAnchor="middle" className="svg-label">轴输出</text>
-        <text x="625" y="150" textAnchor="middle" className="svg-axis-label">{Math.round(pout)} W</text>
-        <path d="M 248 128 C 258 214, 322 232, 384 232" className="loss-line" markerEnd="url(#arrow-amber)" />
-        <rect x="384" y="210" width="128" height="50" rx="14" className="flow-box flow-box--amber" />
-        <text x="448" y="242" textAnchor="middle" className="svg-axis-label">铜耗 {Math.round(pcu)}W</text>
-        <path d="M 500 128 C 514 198, 562 218, 620 224" className="loss-line" markerEnd="url(#arrow-amber)" />
-        <text x="624" y="248" textAnchor="middle" className="svg-axis-label">机械损耗</text>
+      <svg className="performance-book-svg" viewBox="0 0 840 360" role="img" aria-label="直流电机性能计算功率平衡图">
+        <defs>
+          <marker id="performance-book-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" className="performance-book-arrow-head" />
+          </marker>
+        </defs>
+
+        <text x="420" y="44" textAnchor="middle" className="performance-book-heading">功率平衡路径</text>
+        <text x="278" y="76" textAnchor="middle" className="performance-book-equation">VI = I²R + EI</text>
+        <text x="592" y="76" textAnchor="middle" className="performance-book-equation">Pout = EI - P损</text>
+
+        <PowerNode x={56} y={118} title="电输入" value={pin} formula="VI" />
+        <PowerNode x={344} y={118} title="电磁转换" value={pconv} formula="EI" />
+        <PowerNode x={634} y={118} title="轴输出" value={pout} formula="Pout" />
+
+        <path d="M 206 154 H 344" className="performance-book-main" markerEnd="url(#performance-book-arrow)" />
+        <path d="M 494 154 H 634" className="performance-book-main" markerEnd="url(#performance-book-arrow)" />
+
+        <path d="M 270 154 V 250" className="performance-book-loss" markerEnd="url(#performance-book-arrow)" />
+        <rect x="190" y="258" width="160" height="54" rx="8" className="performance-book-loss-box" />
+        <text x="270" y="281" textAnchor="middle" className="performance-book-loss-title">电枢铜耗</text>
+        <text x="270" y="303" textAnchor="middle" className="performance-book-value">{formatNumber(pcu, 0)} W</text>
+
+        <path d="M 560 154 V 250" className="performance-book-loss" markerEnd="url(#performance-book-arrow)" />
+        <rect x="480" y="258" width="160" height="54" rx="8" className="performance-book-loss-box" />
+        <text x="560" y="281" textAnchor="middle" className="performance-book-loss-title">机械损耗</text>
+        <text x="560" y="303" textAnchor="middle" className="performance-book-value">{formatNumber(loss, 0)} W</text>
+
+        <text x="270" y="232" textAnchor="middle" className="performance-book-note">先扣 I²R</text>
+        <text x="560" y="232" textAnchor="middle" className="performance-book-note">再扣损耗</text>
       </svg>
     </DemoFrame>
   );
