@@ -4,7 +4,7 @@ import { DemoFrame, Readout, useDemoClock } from "./shared";
 
 const INITIAL_LOAD = 0.65;
 const STAGES = ["TL↑", "ω↓", "E↓", "I↑", "Te↑", "平衡"];
-const PLOT = { x: 338, y: 64, w: 478, h: 244 };
+const PLOT = { x: 396, y: 66, w: 544, h: 244 };
 const SPEED_MIN = 0.36;
 const SPEED_MAX = 1.08;
 const TORQUE_MAX = 2.1;
@@ -14,12 +14,16 @@ type Point = {
   y: number;
 };
 
+type LoadState = {
+  omega: number;
+  current: number;
+  loadTorque: number;
+  speedFinal: number;
+  trace: Array<[number, number]>;
+};
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
-}
-
-function response(t: number, delay: number, tau: number) {
-  return t <= delay ? 0 : 1 - Math.exp(-(t - delay) / tau);
 }
 
 function stageAt(t: number) {
@@ -49,10 +53,17 @@ function pathFromCurve(points: Array<[number, number]>) {
     .join(" ");
 }
 
+function motorConstants(loadFinal: number, speedFinal: number) {
+  const resistance = (1 - speedFinal) / Math.max(0.04, loadFinal - INITIAL_LOAD);
+  const voltage = 1 + resistance * INITIAL_LOAD;
+  return { resistance, voltage };
+}
+
 function buildMotorCurve(speedFinal: number, loadFinal: number) {
+  const { resistance, voltage } = motorConstants(loadFinal, speedFinal);
   return Array.from({ length: 72 }, (_, index) => {
     const speed = SPEED_MIN + ((SPEED_MAX - SPEED_MIN) * index) / 71;
-    const torque = clamp(loadFinal + (speedFinal - speed) * 2.35, 0.12, 2.0);
+    const torque = clamp((voltage - speed) / resistance, 0.12, 2.0);
     return [speed, torque] as [number, number];
   });
 }
@@ -65,6 +76,42 @@ function buildLoadCurve(level: number, speedAtLevel: number) {
   });
 }
 
+function solveLoadState(loadFinal: number, elapsed: number): LoadState {
+  const loadDelta = Math.max(0.05, loadFinal - INITIAL_LOAD);
+  const speedFinal = clamp(1 - 0.34 * loadDelta, 0.38, 0.95);
+  const { resistance, voltage } = motorConstants(loadFinal, speedFinal);
+  const stepTime = 0.45;
+  const loadTorque = elapsed >= stepTime ? loadFinal : INITIAL_LOAD;
+  let omega = 1;
+  let current = INITIAL_LOAD;
+  const trace: Array<[number, number]> = [[omega, current]];
+
+  if (elapsed <= stepTime) {
+    return { omega, current, loadTorque, speedFinal, trace };
+  }
+
+  const simTime = elapsed - stepTime;
+  const dt = 0.018;
+  const inductance = 0.2;
+  const inertia = 0.95;
+  let nextSample = 0.12;
+
+  for (let time = 0; time < simTime; time += dt) {
+    const h = Math.min(dt, simTime - time);
+    const dCurrent = (voltage - omega - resistance * current) / inductance;
+    const dOmega = (current - loadFinal) / inertia;
+    current += dCurrent * h;
+    omega += dOmega * h;
+
+    if (time + h >= nextSample || time + h >= simTime) {
+      trace.push([omega, current]);
+      nextSample += 0.12;
+    }
+  }
+
+  return { omega, current, loadTorque, speedFinal, trace };
+}
+
 export default function LoadStepDemo() {
   const [playing, setPlaying] = useState(false);
   const [finalLoad, setFinalLoad] = useState(1.45);
@@ -72,15 +119,9 @@ export default function LoadStepDemo() {
 
   const t = Math.min(time, 6);
   const active = playing ? stageAt(t) : 0;
-  const loadDelta = Math.max(0.05, finalLoad - INITIAL_LOAD);
-  const loadStep = playing && t >= 0.45 ? 1 : 0;
-  const loadTorque = INITIAL_LOAD + loadDelta * loadStep;
-  const speedFinal = clamp(1 - 0.34 * loadDelta, 0.38, 0.95);
-  const speedProgress = playing ? response(t, 1.05, 1.15) : 0;
-  const omega = 1 - (1 - speedFinal) * speedProgress;
+  const dynamicState = solveLoadState(finalLoad, playing ? t : 0);
+  const { omega, current, loadTorque, speedFinal, trace: runningTrace } = dynamicState;
   const emf = omega;
-  const currentProgress = playing ? response(t, 2.45, 1.0) : 0;
-  const current = INITIAL_LOAD + loadDelta * currentProgress;
   const electromagneticTorque = current;
   const netTorque = electromagneticTorque - loadTorque;
   const isBalanced = Math.abs(netTorque) < 0.05 && playing && t > 4.75;
@@ -96,7 +137,8 @@ export default function LoadStepDemo() {
   const currentPoint = plotPoint(omega, electromagneticTorque);
   const oldPoint = plotPoint(1, INITIAL_LOAD);
   const newPoint = plotPoint(speedFinal, finalLoad);
-  const status = playing ? `当前：${STAGES[active]}` : "点击“突然加负载”：负载曲线上移，运行点沿电机曲线左移";
+  const traceLabelPoint = plotPoint(...(runningTrace[Math.floor(runningTrace.length * 0.58)] ?? runningTrace[0]));
+  const status = playing ? `当前：${STAGES[active]}` : "点击“突然加负载”：按电枢电感和惯量求动态轨迹";
 
   return (
     <DemoFrame
@@ -141,7 +183,7 @@ export default function LoadStepDemo() {
         </>
       }
     >
-      <svg className="load-step-book-svg" viewBox="0 0 900 420" role="img" aria-label="负载阶跃后直流电机寻找新平衡的转矩转速曲线">
+      <svg className="load-step-book-svg" viewBox="0 0 1020 430" role="img" aria-label="负载阶跃后直流电机寻找新平衡的转矩转速曲线">
         <defs>
           <marker id="load-book-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" className="load-book-arrow-head" />
@@ -164,7 +206,7 @@ export default function LoadStepDemo() {
         </g>
 
         <g aria-label="稳态转矩转速曲线">
-          <text x={PLOT.x} y="36" className="load-book-heading">稳态转矩-转速曲线</text>
+          <text x={PLOT.x + 20} y="36" className="load-book-heading">稳态转矩-转速曲线</text>
           <line x1={PLOT.x} y1={PLOT.y + PLOT.h} x2={PLOT.x + PLOT.w + 18} y2={PLOT.y + PLOT.h} className="load-book-axis" markerEnd="url(#load-book-arrow)" />
           <line x1={PLOT.x} y1={PLOT.y + PLOT.h} x2={PLOT.x} y2={PLOT.y - 18} className="load-book-axis" markerEnd="url(#load-book-arrow)" />
           <text x={PLOT.x - 28} y={PLOT.y - 20} className="load-book-label">转矩</text>
@@ -173,9 +215,12 @@ export default function LoadStepDemo() {
           <path d={pathFromCurve(curves.motor)} className="load-book-motor-curve" />
           <path d={pathFromCurve(curves.oldLoad)} className="load-book-load-curve load-book-load-curve--old" />
           <path d={pathFromCurve(curves.newLoad)} className="load-book-load-curve" />
+          <path d={pathFromCurve(runningTrace)} className="load-book-running-trace" />
 
           <line x1={newPoint.x} y1={newPoint.y} x2={newPoint.x} y2={PLOT.y + PLOT.h} className="load-book-guide" />
           <line x1={PLOT.x} y1={newPoint.y} x2={newPoint.x} y2={newPoint.y} className="load-book-guide" />
+          <line x1={currentPoint.x} y1={currentPoint.y} x2={currentPoint.x} y2={PLOT.y + PLOT.h} className="load-book-running-guide" />
+          <line x1={PLOT.x} y1={currentPoint.y} x2={currentPoint.x} y2={currentPoint.y} className="load-book-running-guide" />
           <circle cx={oldPoint.x} cy={oldPoint.y} r="5" className="load-book-old-point" />
           <circle cx={newPoint.x} cy={newPoint.y} r="6" className="load-book-new-point" />
           <circle cx={currentPoint.x} cy={currentPoint.y} r="7" className="load-book-running-point" />
@@ -185,21 +230,22 @@ export default function LoadStepDemo() {
           <text x={newPoint.x + 30} y={newPoint.y + 4} className="load-book-small">新平衡</text>
           <text x={PLOT.x + 286} y={PLOT.y + 56} className="load-book-label">电机</text>
           <text x={PLOT.x + 180} y={PLOT.y + 154} className="load-book-label">负载</text>
+          {runningTrace.length > 4 ? <text x={traceLabelPoint.x + 12} y={traceLabelPoint.y - 10} className="load-book-small">动态轨迹</text> : null}
           <text x={currentPoint.x + 12} y={currentPoint.y + 22} className="load-book-small">运行点</text>
         </g>
 
-        <g aria-label="寻找平衡过程" transform="translate(44 354)">
+        <g aria-label="寻找平衡过程" transform="translate(62 358)">
           {STAGES.map((stage, index) => (
-            <g key={stage} transform={`translate(${index * 136} 0)`}>
-              <rect width="104" height="38" rx="8" className={index <= active ? "load-book-stage is-active" : "load-book-stage"} />
-              <text x="52" y="25" textAnchor="middle" className="load-book-stage-text">{stage}</text>
-              {index < STAGES.length - 1 ? <path d="M 108 19 H 130" className="load-book-stage-arrow" markerEnd="url(#load-book-arrow)" /> : null}
+            <g key={stage} transform={`translate(${index * 148} 0)`}>
+              <rect width="112" height="38" rx="8" className={index <= active ? "load-book-stage is-active" : "load-book-stage"} />
+              <text x="56" y="25" textAnchor="middle" className="load-book-stage-text">{stage}</text>
+              {index < STAGES.length - 1 ? <path d="M 116 19 H 142" className="load-book-stage-arrow" markerEnd="url(#load-book-arrow)" /> : null}
             </g>
           ))}
         </g>
 
-        <text x="450" y="402" textAnchor="middle" className="load-book-caption">
-          负载曲线上移后，运行点沿电机曲线移动到新交点 X
+        <text x="510" y="418" textAnchor="middle" className="load-book-caption">
+          轨迹由 LdI/dt=V-kω-RI 与 Jdω/dt=Te-TL 积分得到
         </text>
       </svg>
     </DemoFrame>

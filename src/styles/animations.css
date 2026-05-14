@@ -23,7 +23,8 @@
   .demo-frame.is-paused .figure32-flux-outer,
   .demo-frame.is-paused .emf-flux-line,
   .demo-frame.is-paused .steady-book-flux,
-  .demo-frame.is-paused .noload-book-flux {
+  .demo-frame.is-paused .noload-book-flux,
+  .demo-frame.is-paused .weak-field-flux {
     animation-play-state: paused;
   }
 
@@ -157,6 +158,7 @@
 .steady-book-chain-svg,
 .noload-book-motor-svg,
 .noload-book-gauge-svg,
+.weak-field-book-svg,
 .equivalent-book-svg,
 .figure34-svg,
 .figure-role-svg,
@@ -917,6 +919,11 @@
   background: #f8fafc;
 }
 
+.weak-field-book-svg {
+  min-height: 520px;
+  background: #f8fafc;
+}
+
 .noload-book-flux {
   fill: none;
   stroke: #111827;
@@ -966,6 +973,121 @@
 
 .noload-book-scale {
   font-size: 12px;
+}
+
+.weak-field-flux {
+  fill: none;
+  stroke: #111827;
+  stroke-width: 2.1;
+  stroke-dasharray: 7 7;
+  stroke-linecap: round;
+  animation: dash-flow 1.8s linear infinite;
+}
+
+.weak-field-heading,
+.weak-field-axis-label,
+.weak-field-area-label,
+.weak-field-small,
+.weak-field-formula,
+.weak-field-footnote,
+.weak-field-note {
+  fill: #111827;
+  font-weight: 900;
+}
+
+.weak-field-heading {
+  font-size: 16px;
+}
+
+.weak-field-axis-label {
+  font-size: 16px;
+}
+
+.weak-field-area-label {
+  font-size: 15px;
+}
+
+.weak-field-small,
+.weak-field-footnote,
+.weak-field-note {
+  font-size: 13px;
+}
+
+.weak-field-formula {
+  font-size: 15px;
+}
+
+.weak-field-panel,
+.weak-field-bar-bg {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 1.5;
+}
+
+.weak-field-bar-bg {
+  fill: #ffffff;
+  opacity: 0.9;
+}
+
+.weak-field-bar-fill {
+  fill: #d6d3d1;
+  stroke: #111827;
+  stroke-width: 1.2;
+  transition: width 180ms ease;
+}
+
+.weak-field-axis,
+.weak-field-curve,
+.weak-field-guide,
+.weak-field-callout {
+  fill: none;
+  stroke: #111827;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.weak-field-axis {
+  stroke-width: 2.4;
+}
+
+.weak-field-curve {
+  stroke-width: 2.2;
+}
+
+.weak-field-guide {
+  stroke-width: 1.3;
+  stroke-dasharray: 6 5;
+  opacity: 0.72;
+}
+
+.weak-field-guide--live {
+  stroke-dasharray: 3 5;
+  opacity: 0.48;
+}
+
+.weak-field-callout {
+  stroke-width: 1.4;
+}
+
+.weak-field-shade {
+  fill: #d6d3d1;
+  opacity: 0.76;
+}
+
+.weak-field-shade--light {
+  opacity: 0.46;
+}
+
+.weak-field-point {
+  fill: #111827;
+  stroke: #111827;
+  stroke-width: 1.2;
+  transition: cx 180ms ease, cy 180ms ease;
+}
+
+.weak-field-point--live {
+  fill: #ffffff;
+  stroke-width: 2;
 }
 
 .performance-book-svg,
@@ -1055,12 +1177,18 @@
 }
 
 .load-book-motor-curve,
-.load-book-load-curve {
+.load-book-load-curve,
+.load-book-running-trace {
   fill: none;
   stroke: #111827;
   stroke-width: 2.4;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.load-book-running-trace {
+  stroke-width: 5;
+  opacity: 0.86;
 }
 
 .load-book-load-curve {
@@ -1071,11 +1199,18 @@
   opacity: 0.32;
 }
 
-.load-book-guide {
+.load-book-guide,
+.load-book-running-guide {
   stroke: #111827;
   stroke-width: 1.5;
   stroke-dasharray: 6 5;
   opacity: 0.75;
+}
+
+.load-book-running-guide {
+  stroke-width: 1.3;
+  stroke-dasharray: 3 5;
+  opacity: 0.48;
 }
 
 .load-book-terminal,
@@ -1941,6 +2076,7 @@
   .steady-book-chain-svg,
   .noload-book-motor-svg,
   .noload-book-gauge-svg,
+  .weak-field-book-svg,
   .equivalent-book-svg,
   .figure34-svg,
   .figure-role-svg,
@@ -1955,7 +2091,7 @@
     width: 100%;
     height: auto;
     min-height: 0;
-    aspect-ratio: 900 / 420;
+    aspect-ratio: 1020 / 430;
   }
 
   .load-step-svg,
@@ -1999,6 +2135,13 @@
     height: auto;
     min-height: 0;
     aspect-ratio: 300 / 250;
+  }
+
+  .weak-field-book-svg {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1040 / 560;
   }
 
   .steady-book-chain-svg {
