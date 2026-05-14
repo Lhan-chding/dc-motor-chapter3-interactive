@@ -204,6 +204,15 @@ function StudyNotes({ section }: { section: SectionData }) {
           ))}
         </div>
       </FoldableNote>
+      {section.cautionNotes?.length ? (
+        <FoldableNote title="注意事项" variant="mistake">
+          <ul className="caution-list">
+            {section.cautionNotes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
+        </FoldableNote>
+      ) : null}
       <FoldableNote title="易错点" variant="mistake">
         <ul className="mistake-list">
           {section.commonMistakes.map((mistake) => (

@@ -17,6 +17,7 @@ export type SectionData = {
     oneLine: string;
   }[];
   speakerNotes: string[];
+  cautionNotes?: string[];
   commonMistakes: {
     wrong: string;
     correct: string;
@@ -114,6 +115,12 @@ export const chapterSections: SectionData[] = [
     briefConcepts: [
       { title: "导体运动", oneLine: "切割磁场产生感应电势" },
       { title: "端口表现", oneLine: "电刷端看到近似直流" }
+    ],
+    cautionNotes: [
+      "转子导体有感应电动势，转子铁心本身也会感应电动势。",
+      "相邻转子齿电势方向相反，导电铁心中会形成涡流。",
+      "铁心用绝缘薄硅钢片叠压，可减少涡流发热和制动转矩。",
+      "薄片通常小于 1mm，目的不是承力，而是切断涡流通路。"
     ],
     speakerNotes: ["可将换向器解释为机械整流器，把内部交变电势变成端口直流。"],
     commonMistakes: [{ wrong: "静止时也有反电动势", correct: "静止时 E 近似为零" }]
