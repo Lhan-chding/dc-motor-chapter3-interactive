@@ -209,6 +209,7 @@ export default function TorqueProductionDemo() {
         <rect x="24" y="24" width="912" height="460" rx="24" className="figure32-panel" />
         <TwoPolePermanentFigure currentSign={currentSign} phiLevel={phiLevel} torqueSign={torqueSign} rotorAngle={rotorAngle} />
         <FourPoleWindingFigure currentSign={currentSign} phiLevel={phiLevel} torqueSign={torqueSign} rotorAngle={rotorAngle} />
+        <text x="480" y="472" textAnchor="middle" className="figure32-smooth-note">线圈与换向片越多，转矩越平滑</text>
         <text x="480" y="502" textAnchor="middle" className="figure32-note">图 3.2  直流电机的励磁系统。a）2 极永磁励磁；b）4 极电励磁</text>
       </svg>
     </DemoFrame>

@@ -123,10 +123,13 @@ export default function CommutatorRoleDemo() {
   const [mode, setMode] = useState<Mode>("with");
   const [speed, setSpeed] = useState(55);
   const { time, reset } = useDemoClock(playing, speed / 45);
-  const angle = (time * speed) % 360;
-  const rad = (angle * Math.PI) / 180;
+  const phaseAngle = (time * speed) % 360;
+  const returning = mode === "without" && phaseAngle > 180;
+  const angle = mode === "without" ? (returning ? 360 - phaseAngle : phaseAngle) : phaseAngle;
+  const rad = (phaseAngle * Math.PI) / 180;
   const rawTorque = Math.sin(rad);
   const visibleTorque = mode === "with" ? Math.abs(rawTorque) : rawTorque;
+  const motionState = mode === "with" ? "连续旋转" : returning ? "反向回摆" : "正向半周";
 
   const points = useMemo(
     () =>
@@ -140,7 +143,7 @@ export default function CommutatorRoleDemo() {
 
   return (
     <DemoFrame
-      status={mode === "with" ? "换向器每半周反接，转矩保持同向" : "无换向器时，半周后转矩反向"}
+      status={mode === "with" ? "换向器每半周反接，转矩保持同向" : "无换向器：半周后转矩反向，转子回摆"}
       playing={playing}
       onToggle={() => setPlaying((value) => !value)}
       onReset={reset}
@@ -155,11 +158,16 @@ export default function CommutatorRoleDemo() {
           </button>
         </div>
       }
-      readouts={<Readout label="转矩方向" value={visibleTorque >= 0 ? "正向" : "反向"} tone={visibleTorque >= 0 ? "green" : "amber"} />}
+      readouts={
+        <>
+          <Readout label="转矩方向" value={visibleTorque >= 0 ? "正向" : "反向"} tone={visibleTorque >= 0 ? "green" : "amber"} />
+          <Readout label="转子运动" value={motionState} tone={returning ? "amber" : "green"} />
+        </>
+      }
     >
       <div className="demo-split">
         <BookCommutatorRoleFigure angle={angle} mode={mode} rawTorque={rawTorque} visibleTorque={visibleTorque} />
-        <Plot points={points} marker={[angle, visibleTorque]} xLabel="角度" yLabel="T" color={mode === "with" ? "green" : "amber"} label="换向器作用下的转矩曲线" />
+        <Plot points={points} marker={[phaseAngle, visibleTorque]} xLabel="角度" yLabel="T" color={mode === "with" ? "green" : "amber"} label={mode === "with" ? "有换向器：转矩保持正向" : "无换向器：转矩正负交替"} />
       </div>
     </DemoFrame>
   );

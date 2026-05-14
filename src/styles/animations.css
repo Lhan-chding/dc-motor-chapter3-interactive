@@ -1385,6 +1385,12 @@
   font-weight: 900;
 }
 
+.figure32-smooth-note {
+  fill: #111827;
+  font-size: 17px;
+  font-weight: 900;
+}
+
 .flux-line,
 .current-arrow,
 .motion-arrow,
