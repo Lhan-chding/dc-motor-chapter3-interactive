@@ -990,7 +990,8 @@
 .weak-field-small,
 .weak-field-formula,
 .weak-field-footnote,
-.weak-field-note {
+.weak-field-note,
+.weak-field-caption {
   fill: #111827;
   font-weight: 900;
 }
@@ -1004,24 +1005,34 @@
 }
 
 .weak-field-area-label {
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .weak-field-small,
 .weak-field-footnote,
 .weak-field-note {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .weak-field-formula {
   font-size: 15px;
 }
 
+.weak-field-caption {
+  font-size: 14px;
+}
+
 .weak-field-panel,
-.weak-field-bar-bg {
+.weak-field-bar-bg,
+.weak-field-label-bg {
   fill: #ffffff;
   stroke: #111827;
   stroke-width: 1.5;
+}
+
+.weak-field-label-bg {
+  stroke-width: 1;
+  opacity: 0.92;
 }
 
 .weak-field-bar-bg {
@@ -1087,7 +1098,7 @@
 
 .weak-field-point--live {
   fill: #ffffff;
-  stroke-width: 2;
+  stroke-width: 3;
 }
 
 .performance-book-svg,

@@ -7,7 +7,7 @@ type Point = {
   y: number;
 };
 
-const MOTOR_CENTER: Point = { x: 240, y: 190 };
+const MOTOR_CENTER: Point = { x: 240, y: 166 };
 const SPEED_AXIS_MAX = 800;
 const TORQUE_AXIS_MAX = 360;
 const POWER_AXIS_MAX = 60000;
@@ -57,21 +57,21 @@ function BookWeakFieldMotor({ angle, phi }: { angle: number; phi: number }) {
       <circle cx={MOTOR_CENTER.x} cy={MOTOR_CENTER.y} r="98" className="figure34-airgap" />
       <g transform={`rotate(${angle} ${MOTOR_CENTER.x} ${MOTOR_CENTER.y})`}>
         <circle cx={MOTOR_CENTER.x} cy={MOTOR_CENTER.y} r="74" className="figure34-coil-track" />
-        <path d="M 188 154 A 72 72 0 0 0 174 214" className="steady-book-inner-arrow" markerEnd="url(#weak-motor-arrow)" />
-        <path d="M 292 226 A 72 72 0 0 0 306 166" className="steady-book-inner-arrow" markerEnd="url(#weak-motor-arrow)" />
-        <path d="M 204 190 A 36 36 0 0 1 276 190 L 262 204 A 20 20 0 0 0 218 204 Z" className="figure34-commutator-segment" />
-        <path d="M 276 190 A 36 36 0 0 1 204 190 L 218 176 A 20 20 0 0 0 262 176 Z" className="figure34-commutator-segment" />
+        <path d="M 188 130 A 72 72 0 0 0 174 190" className="steady-book-inner-arrow" markerEnd="url(#weak-motor-arrow)" />
+        <path d="M 292 202 A 72 72 0 0 0 306 142" className="steady-book-inner-arrow" markerEnd="url(#weak-motor-arrow)" />
+        <path d="M 204 166 A 36 36 0 0 1 276 166 L 262 180 A 20 20 0 0 0 218 180 Z" className="figure34-commutator-segment" />
+        <path d="M 276 166 A 36 36 0 0 1 204 166 L 218 152 A 20 20 0 0 0 262 152 Z" className="figure34-commutator-segment" />
       </g>
 
       <circle cx={MOTOR_CENTER.x} cy={MOTOR_CENTER.y} r="21" className="figure34-shaft" />
       <path d={`M ${MOTOR_CENTER.x} ${MOTOR_CENTER.y} L ${rotorA.x} ${rotorA.y}`} className="figure34-spoke" />
       <path d={`M ${MOTOR_CENTER.x} ${MOTOR_CENTER.y} L ${rotorB.x} ${rotorB.y}`} className="figure34-spoke" />
-      <path d="M 160 254 A 114 114 0 0 1 154 104" className="steady-book-torque-arrow" markerEnd="url(#weak-motor-arrow)" />
+      <path d="M 160 230 A 114 114 0 0 1 154 80" className="steady-book-torque-arrow" markerEnd="url(#weak-motor-arrow)" />
 
       <text x="136" y="80" className="steady-book-symbol">n</text>
       <text x="322" y="78" className="steady-book-symbol">Φ</text>
       <text x="346" y="78" className="weak-field-note">减小</text>
-      <text x="240" y="302" textAnchor="middle" className="book-circuit-caption">电压到上限后，减小 Φ 才能继续升速</text>
+      <text x="240" y="294" textAnchor="middle" className="book-circuit-caption">电压到上限后，减小 Φ 才能继续升速</text>
     </g>
   );
 }
@@ -166,16 +166,18 @@ function BookWeakFieldFigure({
         <circle cx={graph.x} cy={ratedTorqueY} r="4" className="weak-field-point" />
         <circle cx={ratedX} cy={ratedTorqueY} r="4" className="weak-field-point" />
         <circle cx={ratedX} cy={torqueBase} r="4" className="weak-field-point" />
-        {showWeakPoint ? <circle cx={pointX} cy={torquePointY} r="5" className="weak-field-point weak-field-point--live" /> : null}
         <text x={graph.x - 14} y={ratedTorqueY - 8} className="weak-field-small">a</text>
-        <text x={ratedX - 6} y={ratedTorqueY - 10} className="weak-field-small">b</text>
+        <text x={ratedX - 6} y={ratedTorqueY - 12} className="weak-field-small">b</text>
         <text x={ratedX - 6} y={torqueBase + 20} className="weak-field-small">c</text>
-        {showWeakPoint ? <text x={pointX + 12} y={torquePointY - 8} className="weak-field-small">{outOfRange ? "超量程" : "e"}</text> : null}
-        <text x={graph.x + 50} y={Math.max(torqueTop + 48, ratedTorqueY + 34)} className="weak-field-area-label">全磁通(恒转矩)区域</text>
-        <text x={ratedX + 44} y={Math.max(torqueTop + 78, ratedTorqueY + 54)} className="weak-field-area-label">弱磁(恒功率)区域</text>
-        <path d={`M ${ratedX + 88} ${ratedTorqueY + 58} L ${ratedX + 42} ${ratedTorqueY + 26}`} className="weak-field-callout" markerEnd="url(#weak-plot-arrow)" />
-        <text x={ratedX + 92} y={ratedTorqueY + 36} className="weak-field-small">额定转速</text>
-        <text x={graph.x + graph.width - 12} y={torqueBase - 10} textAnchor="end" className="weak-field-small">0-{SPEED_AXIS_MAX} rad/s</text>
+        {showWeakPoint ? <text x={pointX + 14} y={torquePointY - 13} className="weak-field-small">{outOfRange ? "限速" : "e"}</text> : null}
+        <rect x={graph.x + 28} y={torqueBase - 32} width="78" height="23" rx="3" className="weak-field-label-bg" />
+        <text x={graph.x + 67} y={torqueBase - 16} textAnchor="middle" className="weak-field-area-label">恒转矩区</text>
+        <rect x={graph.x + graph.width - 132} y={torqueTop + 16} width="74" height="23" rx="3" className="weak-field-label-bg" />
+        <text x={graph.x + graph.width - 95} y={torqueTop + 32} textAnchor="middle" className="weak-field-area-label">弱磁区</text>
+        <path d={`M ${ratedX + 92} ${ratedTorqueY + 50} L ${ratedX + 28} ${ratedTorqueY + 20}`} className="weak-field-callout" markerEnd="url(#weak-plot-arrow)" />
+        <rect x={ratedX + 94} y={ratedTorqueY + 27} width="68" height="22" rx="3" className="weak-field-label-bg" />
+        <text x={ratedX + 128} y={ratedTorqueY + 43} textAnchor="middle" className="weak-field-small">额定转速</text>
+        {showWeakPoint ? <circle cx={pointX} cy={torquePointY} r="7" className="weak-field-point weak-field-point--live" /> : null}
       </g>
 
       <g aria-label="功率转速连续运行区">
@@ -187,11 +189,11 @@ function BookWeakFieldFigure({
         <path d={`M ${ratedX} ${powerPointY - 8} V ${powerBase + 6}`} className="weak-field-guide" />
         {showWeakPoint ? <path d={`M ${pointX} ${powerPointY} V ${powerBase + 6}`} className="weak-field-guide weak-field-guide--live" /> : null}
         <circle cx={ratedX} cy={powerPointY} r="5" className="weak-field-point" />
-        {showWeakPoint ? <circle cx={pointX} cy={powerPointY} r="5" className="weak-field-point weak-field-point--live" /> : null}
+        {showWeakPoint ? <circle cx={pointX} cy={powerPointY} r="7" className="weak-field-point weak-field-point--live" /> : null}
         <text x={graph.x - 28} y={powerPointY + 4} className="weak-field-small">{formatNumber(maxPower / 1000, 0)}kW</text>
-        <text x={ratedX - 8} y={powerPointY - 10} className="weak-field-small">b′</text>
+        <text x={ratedX - 8} y={powerPointY - 12} className="weak-field-small">b′</text>
         {showWeakPoint ? <text x={pointX + 12} y={powerPointY - 8} className="weak-field-small">e′</text> : null}
-        <text x={graph.x + 170} y={powerBase + 38} textAnchor="middle" className="book-circuit-caption">
+        <text x={graph.x + 228} y={powerBase + 38} textAnchor="middle" className="weak-field-caption">
           图 3.10  转矩-转速平面和功率-转速平面中的连续运行区
         </text>
       </g>
