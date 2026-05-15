@@ -244,7 +244,7 @@ export default function LoadStepDemo() {
           <text x={newPoint.x + 12} y={newPoint.y - 14} className="load-book-label">X</text>
           <text x={newPoint.x + 30} y={newPoint.y + 4} className="load-book-small">新平衡</text>
           <text x={PLOT.x + 286} y={PLOT.y + 56} className="load-book-label">电机</text>
-          <text x={PLOT.x + 180} y={PLOT.y + 154} className="load-book-label">负载</text>
+          <text x={PLOT.x + 164} y={PLOT.y + 154} className="load-book-label">负载 T_L(ω)</text>
           {runningTrace.length > 4 ? <text x={traceLabelPoint.x + 12} y={traceLabelPoint.y - 10} className="load-book-small">动态轨迹</text> : null}
           <text x={currentPoint.x + 12} y={currentPoint.y + 22} className="load-book-small">运行点</text>
         </g>
