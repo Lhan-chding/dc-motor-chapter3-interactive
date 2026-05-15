@@ -1,8 +1,12 @@
 import { useMemo, useState } from "react";
+import { solveDcMotorTransient } from "../utils/motorMath";
 import { formatNumber } from "../utils/format";
 import { DemoFrame, Readout, useDemoClock } from "./shared";
 
 const INITIAL_LOAD = 0.65;
+const MOTOR_K = 1;
+const ARMATURE_L = 0.2;
+const ROTOR_J = 0.95;
 const STAGES = ["TL↑", "ω↓", "E↓", "I↑", "Te↑", "平衡"];
 const PLOT = { x: 396, y: 66, w: 544, h: 244 };
 const SPEED_MIN = 0.36;
@@ -54,16 +58,21 @@ function pathFromCurve(points: Array<[number, number]>) {
 }
 
 function motorConstants(loadFinal: number, speedFinal: number) {
-  const resistance = (1 - speedFinal) / Math.max(0.04, loadFinal - INITIAL_LOAD);
-  const voltage = 1 + resistance * INITIAL_LOAD;
+  const resistance = (MOTOR_K * MOTOR_K * (1 - speedFinal)) / Math.max(0.04, loadFinal - INITIAL_LOAD);
+  const voltage = MOTOR_K + (resistance * INITIAL_LOAD) / MOTOR_K;
   return { resistance, voltage };
+}
+
+function loadTorqueAtSpeed(level: number, speedAtLevel: number, speed: number) {
+  const speedRatio = clamp(speed / Math.max(0.08, speedAtLevel), 0, 1.5);
+  return clamp(level * (0.52 + 0.48 * Math.pow(speedRatio, 1.7)), 0.08, 2.05);
 }
 
 function buildMotorCurve(speedFinal: number, loadFinal: number) {
   const { resistance, voltage } = motorConstants(loadFinal, speedFinal);
   return Array.from({ length: 72 }, (_, index) => {
     const speed = SPEED_MIN + ((SPEED_MAX - SPEED_MIN) * index) / 71;
-    const torque = clamp((voltage - speed) / resistance, 0.12, 2.0);
+    const torque = clamp((MOTOR_K * (voltage - MOTOR_K * speed)) / resistance, 0.12, 2.0);
     return [speed, torque] as [number, number];
   });
 }
@@ -71,7 +80,7 @@ function buildMotorCurve(speedFinal: number, loadFinal: number) {
 function buildLoadCurve(level: number, speedAtLevel: number) {
   return Array.from({ length: 72 }, (_, index) => {
     const speed = SPEED_MIN + ((SPEED_MAX - SPEED_MIN) * index) / 71;
-    const torque = clamp(level * (0.52 + 0.48 * Math.pow(speed / speedAtLevel, 1.7)), 0.08, 2.05);
+    const torque = loadTorqueAtSpeed(level, speedAtLevel, speed);
     return [speed, torque] as [number, number];
   });
 }
@@ -81,35 +90,41 @@ function solveLoadState(loadFinal: number, elapsed: number): LoadState {
   const speedFinal = clamp(1 - 0.34 * loadDelta, 0.38, 0.95);
   const { resistance, voltage } = motorConstants(loadFinal, speedFinal);
   const stepTime = 0.45;
-  const loadTorque = elapsed >= stepTime ? loadFinal : INITIAL_LOAD;
+  const loadTorque = elapsed >= stepTime ? loadTorqueAtSpeed(loadFinal, speedFinal, 1) : INITIAL_LOAD;
   let omega = 1;
-  let current = INITIAL_LOAD;
-  const trace: Array<[number, number]> = [[omega, current]];
+  let current = INITIAL_LOAD / MOTOR_K;
+  const trace: Array<[number, number]> = [[omega, MOTOR_K * current]];
 
   if (elapsed <= stepTime) {
     return { omega, current, loadTorque, speedFinal, trace };
   }
 
   const simTime = elapsed - stepTime;
-  const dt = 0.018;
-  const inductance = 0.2;
-  const inertia = 0.95;
-  let nextSample = 0.12;
+  const samples = solveDcMotorTransient({
+    voltage,
+    resistance,
+    motorConstant: MOTOR_K,
+    inductance: ARMATURE_L,
+    inertia: ROTOR_J,
+    initialCurrent: current,
+    initialOmega: omega,
+    duration: simTime,
+    dt: 0.006,
+    sampleInterval: 0.08,
+    loadTorque: (speed) => loadTorqueAtSpeed(loadFinal, speedFinal, speed)
+  });
+  const latest = samples[samples.length - 1];
 
-  for (let time = 0; time < simTime; time += dt) {
-    const h = Math.min(dt, simTime - time);
-    const dCurrent = (voltage - omega - resistance * current) / inductance;
-    const dOmega = (current - loadFinal) / inertia;
-    current += dCurrent * h;
-    omega += dOmega * h;
+  omega = latest.omega;
+  current = latest.current;
 
-    if (time + h >= nextSample || time + h >= simTime) {
-      trace.push([omega, current]);
-      nextSample += 0.12;
-    }
-  }
-
-  return { omega, current, loadTorque, speedFinal, trace };
+  return {
+    omega,
+    current,
+    loadTorque: latest.loadTorque,
+    speedFinal,
+    trace: samples.map((sample) => [sample.omega, sample.electromagneticTorque])
+  };
 }
 
 export default function LoadStepDemo() {
@@ -121,8 +136,8 @@ export default function LoadStepDemo() {
   const active = playing ? stageAt(t) : 0;
   const dynamicState = solveLoadState(finalLoad, playing ? t : 0);
   const { omega, current, loadTorque, speedFinal, trace: runningTrace } = dynamicState;
-  const emf = omega;
-  const electromagneticTorque = current;
+  const emf = MOTOR_K * omega;
+  const electromagneticTorque = MOTOR_K * current;
   const netTorque = electromagneticTorque - loadTorque;
   const isBalanced = Math.abs(netTorque) < 0.05 && playing && t > 4.75;
 
@@ -138,7 +153,7 @@ export default function LoadStepDemo() {
   const oldPoint = plotPoint(1, INITIAL_LOAD);
   const newPoint = plotPoint(speedFinal, finalLoad);
   const traceLabelPoint = plotPoint(...(runningTrace[Math.floor(runningTrace.length * 0.58)] ?? runningTrace[0]));
-  const status = playing ? `当前：${STAGES[active]}` : "点击“突然加负载”：按电枢电感和惯量求动态轨迹";
+  const status = playing ? `当前：${STAGES[active]}，轨迹由方程积分` : "点击“突然加负载”：按 LdI/dt 与 Jdω/dt 求动态轨迹";
 
   return (
     <DemoFrame
@@ -245,7 +260,7 @@ export default function LoadStepDemo() {
         </g>
 
         <text x="510" y="418" textAnchor="middle" className="load-book-caption">
-          轨迹由 LdI/dt=V-kω-RI 与 Jdω/dt=Te-TL 积分得到
+          轨迹由 LdI/dt=V-RI-kω 与 Jdω/dt=kI-TL(ω) 数值求解
         </text>
       </svg>
     </DemoFrame>
