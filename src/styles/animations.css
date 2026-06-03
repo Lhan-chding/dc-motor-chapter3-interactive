@@ -153,6 +153,7 @@
 .series-demo-svg,
 .commutation-model-svg,
 .figure-commutation-svg,
+.overview-book-svg,
 .steady-book-motor-svg,
 .steady-book-plot-svg,
 .steady-book-chain-svg,
@@ -1510,6 +1511,31 @@
   stroke-width: 1.6;
 }
 
+.overview-book-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.overview-book-title,
+.overview-book-small {
+  fill: #111827;
+  font-weight: 900;
+}
+
+.overview-book-title {
+  font-size: 18px;
+}
+
+.overview-book-small {
+  font-size: 15px;
+}
+
+.overview-book-hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
 .role-slip-ring {
   fill: none;
   stroke: #111827;
@@ -2082,6 +2108,7 @@
   .commutation-model-svg,
   .load-step-book-svg,
   .figure-commutation-svg,
+  .overview-book-svg,
   .steady-book-motor-svg,
   .steady-book-plot-svg,
   .steady-book-chain-svg,
