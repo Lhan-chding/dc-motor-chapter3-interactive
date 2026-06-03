@@ -144,6 +144,7 @@ export function MotorSketch({
   const fluxStroke = 3 + fluxLevel * 3.5;
   const currentStroke = 3 + currentLevel * 2.5;
   const torqueStroke = 4 + torqueLevel * 2;
+  const visualAngle = -angle;
 
   return (
     <svg className="motor-svg" viewBox="0 0 680 420" role="img" aria-label="直流电机结构动画">
@@ -177,7 +178,7 @@ export function MotorSketch({
           <path d="M 394 354 C 394 332, 402 314, 420 304" className="current-arrow" strokeWidth={currentStroke} markerEnd="url(#arrow-red)" />
         </g>
       ) : null}
-      <g transform={`translate(340 184) rotate(${angle})`} aria-label="电枢转子" onMouseEnter={() => onPartHover?.("电枢线圈在磁场中受力")} onMouseLeave={() => onPartHover?.(null)}>
+      <g transform={`translate(340 184) rotate(${visualAngle})`} aria-label="电枢转子" onMouseEnter={() => onPartHover?.("电枢线圈在磁场中受力")} onMouseLeave={() => onPartHover?.(null)}>
         <circle r="88" fill="#f8fafc" stroke="#dbe3ee" strokeWidth="9" />
         <circle r="52" fill="#ffffff" stroke="#cbd5e1" strokeWidth="5" />
         <rect x="-112" y="-15" width="224" height="30" rx="15" fill="#cbd5e1" />
@@ -194,14 +195,14 @@ export function MotorSketch({
         ) : null}
         {showTorque ? (
           <g aria-label="导体受力方向">
-            <path d="M -94 -18 V -62" className="force-arrow" strokeWidth={torqueStroke} markerEnd="url(#arrow-green)" />
-            <path d="M 94 18 V 62" className="force-arrow" strokeWidth={torqueStroke} markerEnd="url(#arrow-green)" />
+            <path d={currentSign > 0 ? "M -94 -18 V 62" : "M -94 18 V -62"} className="force-arrow" strokeWidth={torqueStroke} markerEnd="url(#arrow-green)" />
+            <path d={currentSign > 0 ? "M 94 18 V -62" : "M 94 -18 V 62"} className="force-arrow" strokeWidth={torqueStroke} markerEnd="url(#arrow-green)" />
           </g>
         ) : null}
       </g>
       <line x1="340" y1="272" x2="340" y2="312" stroke="#94a3b8" strokeWidth="14" strokeLinecap="round" aria-label="转轴" />
       <g aria-label="换向器和电刷" onMouseEnter={() => onPartHover?.("换向器每半圈改变线圈接线")} onMouseLeave={() => onPartHover?.(null)}>
-        <g transform={`translate(340 320) rotate(${angle})`}>
+        <g transform={`translate(340 320) rotate(${visualAngle})`}>
           <path className="commutator-segment" d="M -48 0 A 48 48 0 0 1 48 0 L 28 34 A 34 34 0 0 0 -28 34 Z" fill="#fde68a" stroke="#b45309" strokeWidth="3" />
           <path className="commutator-segment" d="M 48 0 A 48 48 0 0 1 -48 0 L -28 -34 A 34 34 0 0 0 28 -34 Z" fill="#fed7aa" stroke="#b45309" strokeWidth="3" />
         </g>
@@ -214,7 +215,7 @@ export function MotorSketch({
       {showTorque ? (
         <path
           className="torque-arrow"
-          d={torqueSign >= 0 ? "M 224 274 A 142 142 0 1 0 214 104" : "M 456 274 A 142 142 0 1 1 466 104"}
+          d={torqueSign >= 0 ? "M 214 104 A 142 142 0 0 0 224 274" : "M 466 104 A 142 142 0 0 1 456 274"}
           strokeWidth={torqueStroke}
           markerEnd="url(#arrow-green)"
           aria-label="绿色转矩方向"

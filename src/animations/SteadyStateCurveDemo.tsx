@@ -73,11 +73,11 @@ function BookSteadyMotor({ angle, current, omega }: { angle: number; current: nu
       <circle cx={STEADY_MOTOR_CENTER.x} cy={STEADY_MOTOR_CENTER.y} r="22" className="figure34-shaft" />
       <path d={`M ${STEADY_MOTOR_CENTER.x} ${STEADY_MOTOR_CENTER.y} L ${sideA.x} ${sideA.y}`} className="figure34-spoke" />
       <path d={`M ${STEADY_MOTOR_CENTER.x} ${STEADY_MOTOR_CENTER.y} L ${sideB.x} ${sideB.y}`} className="figure34-spoke" />
-      <BookCurrentMark point={sideA} out={positiveCurrent} />
-      <BookCurrentMark point={sideB} out={!positiveCurrent} />
+      <BookCurrentMark point={sideA} out={!positiveCurrent} />
+      <BookCurrentMark point={sideB} out={positiveCurrent} />
 
       <path
-        d={running ? "M 184 246 A 112 112 0 0 1 180 98" : "M 184 246 A 112 112 0 0 1 180 98"}
+        d={running ? "M 180 98 A 112 112 0 0 0 184 246" : "M 180 98 A 112 112 0 0 0 184 246"}
         className="steady-book-torque-arrow"
         markerEnd="url(#steady-motor-arrow)"
       />
@@ -252,7 +252,7 @@ export default function SteadyStateCurveDemo() {
     >
       <div className="demo-split">
         <div className="mechanism-stack">
-          <BookSteadyMotor angle={time * Math.max(12, omega * 0.12)} current={current} omega={omega} />
+          <BookSteadyMotor angle={-time * Math.max(12, omega * 0.12)} current={current} omega={omega} />
           <BookVoltageChain emf={E} voltageDrop={voltageDrop} dropRatio={dropRatio} />
           <svg className="steady-cause-svg" viewBox="0 0 520 210" role="img" aria-label="稳态负载变化的电压分配和因果链">
             <ArrowDefs />

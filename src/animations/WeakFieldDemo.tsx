@@ -66,7 +66,7 @@ function BookWeakFieldMotor({ angle, phi }: { angle: number; phi: number }) {
       <circle cx={MOTOR_CENTER.x} cy={MOTOR_CENTER.y} r="21" className="figure34-shaft" />
       <path d={`M ${MOTOR_CENTER.x} ${MOTOR_CENTER.y} L ${rotorA.x} ${rotorA.y}`} className="figure34-spoke" />
       <path d={`M ${MOTOR_CENTER.x} ${MOTOR_CENTER.y} L ${rotorB.x} ${rotorB.y}`} className="figure34-spoke" />
-      <path d="M 160 230 A 114 114 0 0 1 154 80" className="steady-book-torque-arrow" markerEnd="url(#weak-motor-arrow)" />
+      <path d="M 154 80 A 114 114 0 0 0 160 230" className="steady-book-torque-arrow" markerEnd="url(#weak-motor-arrow)" />
 
       <text x="136" y="80" className="steady-book-symbol">n</text>
       <text x="322" y="78" className="steady-book-symbol">Φ</text>
@@ -252,7 +252,7 @@ export default function WeakFieldDemo() {
       }
     >
       <BookWeakFieldFigure
-        angle={time * Math.max(28, 72 * speedGain)}
+        angle={-time * Math.max(28, 72 * speedGain)}
         phi={phi}
         ratedSpeed={ratedSpeed}
         maxSpeed={baseSpeed}

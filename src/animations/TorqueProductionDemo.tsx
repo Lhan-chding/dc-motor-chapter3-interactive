@@ -173,14 +173,15 @@ export default function TorqueProductionDemo() {
   const tValue = kt * phi * current;
   const currentSign = current >= 0 ? 1 : -1;
   const torqueSign = tValue >= 0 ? 1 : -1;
-  const rotorAngle = Math.abs(tValue) < 1e-6 ? 0 : time * 22 * torqueSign;
+  const leftHandVisualSign = -torqueSign;
+  const rotorAngle = Math.abs(tValue) < 1e-6 ? 0 : time * 22 * leftHandVisualSign;
   const phiLevel = Math.min(1, Math.max(0.05, phi / 1.5));
   const status =
     Math.abs(tValue) < 1e-6
       ? "磁通或电流为零时，不产生电磁转矩"
       : tValue > 0
-        ? "轴向电流与径向磁通作用，形成正向转矩"
-        : "电流反向后，电磁转矩方向反向";
+        ? "按左手定则：默认电流形成逆时针转矩"
+        : "电流反向后，左手定则给出反向转矩";
 
   return (
     <DemoFrame
@@ -207,8 +208,8 @@ export default function TorqueProductionDemo() {
           </marker>
         </defs>
         <rect x="24" y="24" width="912" height="460" rx="24" className="figure32-panel" />
-        <TwoPolePermanentFigure currentSign={currentSign} phiLevel={phiLevel} torqueSign={torqueSign} rotorAngle={rotorAngle} />
-        <FourPoleWindingFigure currentSign={currentSign} phiLevel={phiLevel} torqueSign={torqueSign} rotorAngle={rotorAngle} />
+        <TwoPolePermanentFigure currentSign={currentSign} phiLevel={phiLevel} torqueSign={leftHandVisualSign} rotorAngle={rotorAngle} />
+        <FourPoleWindingFigure currentSign={currentSign} phiLevel={phiLevel} torqueSign={leftHandVisualSign} rotorAngle={rotorAngle} />
         <text x="480" y="472" textAnchor="middle" className="figure32-smooth-note">线圈与换向片越多，转矩越平滑</text>
         <text x="480" y="502" textAnchor="middle" className="figure32-note">图 3.2  直流电机的励磁系统。a）2 极永磁励磁；b）4 极电励磁</text>
       </svg>

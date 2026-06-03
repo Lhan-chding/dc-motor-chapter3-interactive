@@ -51,7 +51,7 @@ function BookNoLoadMotor({ angle, phi, danger }: { angle: number; phi: number; d
         <path d="M 322 172 A 42 42 0 0 1 238 172 L 254 156 A 24 24 0 0 0 306 156 Z" className="figure34-commutator-segment" />
       </g>
       <circle cx={NO_LOAD_CENTER.x} cy={NO_LOAD_CENTER.y} r="22" className="figure34-shaft" />
-      <path d="M 184 246 A 112 112 0 0 1 180 98" className="steady-book-torque-arrow" markerEnd="url(#noload-motor-arrow)" />
+      <path d="M 180 98 A 112 112 0 0 0 184 246" className="steady-book-torque-arrow" markerEnd="url(#noload-motor-arrow)" />
 
       <text x="154" y="78" className="steady-book-symbol">n<tspan baselineShift="sub" fontSize="13">0</tspan></text>
       <text x="356" y="86" className="steady-book-symbol">Φ</text>
@@ -117,7 +117,7 @@ export default function NoLoadSpeedDemo() {
       readouts={<Readout label="n0" value={speed} unit="rpm" tone={danger ? "amber" : "green"} />}
     >
       <div className="demo-split">
-        <BookNoLoadMotor angle={time * speed * 0.2} phi={phi} danger={danger} />
+        <BookNoLoadMotor angle={-time * speed * 0.2} phi={phi} danger={danger} />
         <BookAutoRangeSpeedMeter speed={speed} danger={danger} />
       </div>
     </DemoFrame>

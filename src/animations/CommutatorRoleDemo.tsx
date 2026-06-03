@@ -109,7 +109,7 @@ function BookCommutatorRoleFigure({
       <CurrentDotCross point={sideB} label="b" out={currentSign > 0} />
 
       <path
-        d={torquePositive ? "M 190 252 A 112 112 0 0 1 184 112" : "M 370 252 A 112 112 0 0 0 376 112"}
+        d={torquePositive ? "M 184 112 A 112 112 0 0 0 190 252" : "M 376 112 A 112 112 0 0 1 370 252"}
         className={torquePositive ? "role-torque-arrow" : "role-torque-arrow role-torque-arrow--reverse"}
         markerEnd="url(#role-arrow)"
       />
@@ -166,7 +166,7 @@ export default function CommutatorRoleDemo() {
       }
     >
       <div className="demo-split">
-        <BookCommutatorRoleFigure angle={angle} mode={mode} rawTorque={rawTorque} visibleTorque={visibleTorque} />
+        <BookCommutatorRoleFigure angle={-angle} mode={mode} rawTorque={rawTorque} visibleTorque={visibleTorque} />
         <Plot points={points} marker={[phaseAngle, visibleTorque]} xLabel="角度" yLabel="T" color={mode === "with" ? "green" : "amber"} label={mode === "with" ? "有换向器：转矩保持正向" : "无换向器：转矩正负交替"} />
       </div>
     </DemoFrame>

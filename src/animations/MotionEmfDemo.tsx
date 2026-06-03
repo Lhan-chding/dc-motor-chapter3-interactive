@@ -76,7 +76,7 @@ function BookBackEmfMotor({ angle, speed, emf }: { angle: number; speed: number;
         <EmfSideMark point={sideA} out={positive} />
         <EmfSideMark point={sideB} out={!positive} />
         <path
-          d={speed >= 0 ? "M 190 252 A 112 112 0 0 1 184 112" : "M 370 252 A 112 112 0 0 0 376 112"}
+          d={speed >= 0 ? "M 184 112 A 112 112 0 0 0 190 252" : "M 376 112 A 112 112 0 0 1 370 252"}
           className="role-torque-arrow"
           markerEnd="url(#emf-motor-arrow)"
         />
@@ -95,7 +95,7 @@ export default function MotionEmfDemo() {
 
   return (
     <DemoFrame
-      status={phi === 0 ? "磁通为零：导体运动也不能产生 E" : speed === 0 ? "转速为零：反电动势为零" : speed > 0 ? "正转切割磁场，电压表为正" : "反转切割磁场，电压极性反向"}
+      status={phi === 0 ? "磁通为零：导体运动也不能产生 E" : speed === 0 ? "转速为零：反电动势为零" : speed > 0 ? "按右手定则：正转时端电势为正" : "反转后，右手定则给出相反极性"}
       playing={playing}
       onToggle={() => setPlaying((value) => !value)}
       onReset={reset}
@@ -122,12 +122,19 @@ export default function MotionEmfDemo() {
           ))}
           <g transform={`translate(${180 + Math.sin(time * 4) * 38} 150)`}>
             <rect x="-12" y="-76" width="24" height="152" rx="12" className="emf-conductor" />
-            <line x1="0" y1="-94" x2="0" y2="-126" className="emf-motion-arrow" markerEnd="url(#motion-emf-arrow)" />
+            <line
+              x1="0"
+              y1={speed >= 0 ? -94 : 94}
+              x2="0"
+              y2={speed >= 0 ? -126 : 126}
+              className="emf-motion-arrow"
+              markerEnd="url(#motion-emf-arrow)"
+            />
           </g>
           <rect x="130" y="248" width="100" height="34" rx="4" className="emf-voltage-box" />
           <text x="180" y="271" textAnchor="middle" className="emf-voltage-text">E={formatNumber(E)}V</text>
         </svg>
-        <BookBackEmfMotor angle={time * speed * 0.06} speed={speed} emf={E} />
+        <BookBackEmfMotor angle={-time * speed * 0.06} speed={speed} emf={E} />
       </div>
     </DemoFrame>
   );

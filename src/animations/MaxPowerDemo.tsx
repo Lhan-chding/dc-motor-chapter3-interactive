@@ -68,7 +68,7 @@ export default function MaxPowerDemo() {
               <rect x="-7" y="-58" width="14" height="58" rx="7" fill="var(--green)" transform="rotate(120)" />
               <rect x="-7" y="-58" width="14" height="58" rx="7" fill="var(--green)" transform="rotate(240)" />
             </g>
-            <path d="M 26 156 A 82 82 0 0 1 24 40" className="torque-arrow" markerEnd="url(#arrow-green)" opacity={0.25 + torqueRatio} />
+            <path d="M 24 40 A 82 82 0 0 0 26 156" className="torque-arrow" markerEnd="url(#arrow-green)" opacity={0.25 + torqueRatio} />
             <text x="80" y="172" textAnchor="middle" className="svg-axis-label">ω={Math.round(speedFrac * 100)}%</text>
           </g>
           <g transform="translate(250 96)">

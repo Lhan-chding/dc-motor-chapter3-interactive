@@ -28,7 +28,7 @@ export default function SeriesMotorDemo() {
   const torque = flux * current;
   const speed = clamp((V / 220) * (0.9 / Math.max(0.1, flux)), 0.35, 3.4);
   const danger = load < 0.15 || speed > 2.6;
-  const rotorAngle = (time * 210 * speed) % 360;
+  const rotorAngle = (-time * 210 * speed) % 360;
   const currentWidth = 3 + current * 4;
   const fluxWidth = 3 + flux * 5;
 
@@ -116,7 +116,7 @@ export default function SeriesMotorDemo() {
             <text x="-70" y="6" textAnchor="middle" className="current-mark">×</text>
             <text x="70" y="6" textAnchor="middle" className="current-mark">·</text>
           </g>
-          <path d="M 146 230 A 90 90 0 0 1 134 96" className="torque-arrow" markerEnd="url(#arrow-green)" opacity={0.3 + torque / 2.2} />
+          <path d="M 134 96 A 90 90 0 0 0 146 230" className="torque-arrow" markerEnd="url(#arrow-green)" opacity={0.3 + torque / 2.2} />
           <line x1="250" y1="160" x2="376" y2="160" stroke="#94a3b8" strokeWidth="10" strokeLinecap="round" />
           <circle cx="398" cy="160" r="42" fill={danger ? "#fef3c7" : "#d1fae5"} stroke={danger ? "var(--amber)" : "var(--green)"} strokeWidth="4" />
           <text x="398" y="156" textAnchor="middle" className="svg-axis-label">负载</text>

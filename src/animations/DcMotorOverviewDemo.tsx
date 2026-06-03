@@ -142,7 +142,7 @@ function BookOverviewMotor({
 
       {showTorque ? (
         <g aria-label="转矩方向">
-          <path d="M 252 304 A 142 142 0 0 1 246 118" className="steady-book-torque-arrow" markerEnd="url(#overview-book-arrow)" />
+          <path d="M 246 118 A 142 142 0 0 0 252 304" className="steady-book-torque-arrow" markerEnd="url(#overview-book-arrow)" />
           <text x="226" y="104" className="steady-book-symbol">T</text>
         </g>
       ) : null}
@@ -195,7 +195,7 @@ export default function DcMotorOverviewDemo() {
       }
     >
       <BookOverviewMotor
-        angle={time * speed}
+        angle={-time * speed}
         showFlux={layer === "all" || layer === "flux"}
         showCurrent={layer === "all" || layer === "current"}
         showTorque={layer === "all" || layer === "torque"}
