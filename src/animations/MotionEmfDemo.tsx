@@ -39,6 +39,8 @@ function BookBackEmfMotor({ angle, speed, emf }: { angle: number; speed: number;
   const sideA = polar(EMF_CENTER, 78, aAngle);
   const sideB = polar(EMF_CENTER, 78, bAngle);
   const positive = emf >= 0;
+  const sideAOut = positive ? sideA.x < EMF_CENTER.x : sideA.x > EMF_CENTER.x;
+  const sideBOut = positive ? sideB.x < EMF_CENTER.x : sideB.x > EMF_CENTER.x;
 
   return (
     <svg className="figure-emf-motor-svg" viewBox="0 0 560 360" role="img" aria-label="直流电机反电动势线稿示意">
@@ -73,8 +75,8 @@ function BookBackEmfMotor({ angle, speed, emf }: { angle: number; speed: number;
         <circle cx={EMF_CENTER.x} cy={EMF_CENTER.y} r="22" className="figure34-shaft" />
         <path d={`M ${EMF_CENTER.x} ${EMF_CENTER.y} L ${sideA.x} ${sideA.y}`} className="figure34-spoke" />
         <path d={`M ${EMF_CENTER.x} ${EMF_CENTER.y} L ${sideB.x} ${sideB.y}`} className="figure34-spoke" />
-        <EmfSideMark point={sideA} out={positive} />
-        <EmfSideMark point={sideB} out={!positive} />
+        <EmfSideMark point={sideA} out={sideAOut} />
+        <EmfSideMark point={sideB} out={sideBOut} />
         <path
           d={speed >= 0 ? "M 184 112 A 112 112 0 0 0 190 252" : "M 376 112 A 112 112 0 0 1 370 252"}
           className="role-torque-arrow"

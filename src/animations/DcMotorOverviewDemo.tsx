@@ -47,6 +47,8 @@ function BookOverviewMotor({
 }) {
   const sideA = polar(OVERVIEW_CENTER, 88, 130 + angle);
   const sideB = polar(OVERVIEW_CENTER, 88, 310 + angle);
+  const sideAOut = sideA.x > OVERVIEW_CENTER.x;
+  const sideBOut = sideB.x > OVERVIEW_CENTER.x;
 
   return (
     <svg className="overview-book-svg" viewBox="0 0 760 430" role="img" aria-label="直流电机关键部件线稿示意">
@@ -112,8 +114,8 @@ function BookOverviewMotor({
 
       {showCurrent ? (
         <g aria-label="电枢电流和电刷供电">
-          <BookCurrentMark point={sideA} out={false} />
-          <BookCurrentMark point={sideB} out />
+          <BookCurrentMark point={sideA} out={sideAOut} />
+          <BookCurrentMark point={sideB} out={sideBOut} />
           <path d="M 380 54 V 100" className="figure34-terminal" markerEnd="url(#overview-book-arrow)" />
           <path d="M 380 324 V 378" className="figure34-terminal" markerEnd="url(#overview-book-arrow)" />
           <rect

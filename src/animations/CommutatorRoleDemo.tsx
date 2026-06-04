@@ -46,21 +46,18 @@ function CurrentDotCross({
 
 function BookCommutatorRoleFigure({
   angle,
-  mode,
-  rawTorque,
-  visibleTorque
+  mode
 }: {
   angle: number;
   mode: Mode;
-  rawTorque: number;
-  visibleTorque: number;
 }) {
   const aAngle = 130 + angle;
   const bAngle = aAngle + 180;
   const sideA = polar(ROLE_CENTER, 78, aAngle);
   const sideB = polar(ROLE_CENTER, 78, bAngle);
-  const currentSign = mode === "with" && rawTorque < 0 ? -1 : 1;
-  const torquePositive = visibleTorque >= 0;
+  const sideAOut = mode === "with" ? sideA.x > ROLE_CENTER.x : false;
+  const sideBOut = mode === "with" ? sideB.x > ROLE_CENTER.x : true;
+  const torquePositive = mode === "with" ? true : sideA.x < ROLE_CENTER.x;
 
   return (
     <svg className="figure-role-svg" viewBox="0 0 560 360" role="img" aria-label="换向器作用的单线圈直流电机示意">
@@ -105,8 +102,8 @@ function BookCommutatorRoleFigure({
       <path d={`M ${ROLE_CENTER.x} ${ROLE_CENTER.y} L ${sideA.x} ${sideA.y}`} className="figure34-spoke" />
       <path d={`M ${ROLE_CENTER.x} ${ROLE_CENTER.y} L ${sideB.x} ${sideB.y}`} className="figure34-spoke" />
 
-      <CurrentDotCross point={sideA} label="a" out={currentSign < 0} />
-      <CurrentDotCross point={sideB} label="b" out={currentSign > 0} />
+      <CurrentDotCross point={sideA} label="a" out={sideAOut} />
+      <CurrentDotCross point={sideB} label="b" out={sideBOut} />
 
       <path
         d={torquePositive ? "M 184 112 A 112 112 0 0 0 190 252" : "M 376 112 A 112 112 0 0 1 370 252"}
@@ -166,7 +163,7 @@ export default function CommutatorRoleDemo() {
       }
     >
       <div className="demo-split">
-        <BookCommutatorRoleFigure angle={-angle} mode={mode} rawTorque={rawTorque} visibleTorque={visibleTorque} />
+        <BookCommutatorRoleFigure angle={-angle} mode={mode} />
         <Plot points={points} marker={[phaseAngle, visibleTorque]} xLabel="角度" yLabel="T" color={mode === "with" ? "green" : "amber"} label={mode === "with" ? "有换向器：转矩保持正向" : "无换向器：转矩正负交替"} />
       </div>
     </DemoFrame>

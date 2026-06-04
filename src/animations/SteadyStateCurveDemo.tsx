@@ -44,6 +44,8 @@ function BookSteadyMotor({ angle, current, omega }: { angle: number; current: nu
   const sideA = polar(STEADY_MOTOR_CENTER, 78, aAngle);
   const sideB = polar(STEADY_MOTOR_CENTER, 78, bAngle);
   const positiveCurrent = current >= 0;
+  const sideAOut = positiveCurrent ? sideA.x > STEADY_MOTOR_CENTER.x : sideA.x < STEADY_MOTOR_CENTER.x;
+  const sideBOut = positiveCurrent ? sideB.x > STEADY_MOTOR_CENTER.x : sideB.x < STEADY_MOTOR_CENTER.x;
   const running = omega > 1;
 
   return (
@@ -73,8 +75,8 @@ function BookSteadyMotor({ angle, current, omega }: { angle: number; current: nu
       <circle cx={STEADY_MOTOR_CENTER.x} cy={STEADY_MOTOR_CENTER.y} r="22" className="figure34-shaft" />
       <path d={`M ${STEADY_MOTOR_CENTER.x} ${STEADY_MOTOR_CENTER.y} L ${sideA.x} ${sideA.y}`} className="figure34-spoke" />
       <path d={`M ${STEADY_MOTOR_CENTER.x} ${STEADY_MOTOR_CENTER.y} L ${sideB.x} ${sideB.y}`} className="figure34-spoke" />
-      <BookCurrentMark point={sideA} out={!positiveCurrent} />
-      <BookCurrentMark point={sideB} out={positiveCurrent} />
+      <BookCurrentMark point={sideA} out={sideAOut} />
+      <BookCurrentMark point={sideB} out={sideBOut} />
 
       <path
         d={running ? "M 180 98 A 112 112 0 0 0 184 246" : "M 180 98 A 112 112 0 0 0 184 246"}
