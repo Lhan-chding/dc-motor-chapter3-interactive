@@ -164,6 +164,7 @@
 .figure34-svg,
 .figure-role-svg,
 .figure-emf-motor-svg,
+.hand-rule-svg,
 .figure32-svg {
   width: 100%;
   height: 100%;
@@ -1581,6 +1582,210 @@
   fill: #111827;
   font-size: 15px;
   font-weight: 900;
+}
+
+.hand-rule-svg {
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.hand-rule-panel {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.hand-rule-title {
+  fill: var(--ink);
+  font-size: 23px;
+  font-weight: 900;
+}
+
+.hand-rule-subtitle,
+.hand-step-text {
+  fill: #475569;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.hand-palm,
+.hand-finger,
+.hand-thumb-base {
+  fill: #f8fafc;
+  stroke: #111827;
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+
+.hand-finger {
+  fill: #ffffff;
+}
+
+.hand-thumb-base {
+  fill: #f1f5f9;
+}
+
+.hand-rule-arrow {
+  fill: none;
+  stroke-width: 4.2;
+  stroke-linecap: round;
+  opacity: 0.36;
+}
+
+.hand-rule-arrow.is-active {
+  opacity: 1;
+  stroke-width: 5.2;
+}
+
+.hand-rule-arrow--blue {
+  stroke: var(--blue);
+}
+
+.hand-rule-arrow--red {
+  stroke: var(--red);
+}
+
+.hand-rule-arrow--green {
+  stroke: var(--green);
+}
+
+.hand-rule-axis {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.hand-rule-axis--blue {
+  fill: var(--blue);
+}
+
+.hand-rule-axis--red {
+  fill: var(--red);
+}
+
+.hand-rule-axis--green {
+  fill: var(--green);
+}
+
+.hand-rule-caption rect,
+.hand-rule-result rect {
+  fill: #f1f5f9;
+  stroke: #cbd5e1;
+}
+
+.hand-rule-caption text,
+.hand-rule-result text {
+  fill: var(--ink);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.hand-rule-pole {
+  fill: #f5f5f4;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.hand-rule-pole--n {
+  fill: #dbeafe;
+}
+
+.hand-rule-pole--s {
+  fill: #fee2e2;
+}
+
+.hand-rule-pole-text {
+  fill: var(--ink);
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.hand-field-line {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 12 12;
+  opacity: 0.55;
+}
+
+.hand-field-line.is-active {
+  opacity: 1;
+  stroke-width: 5;
+}
+
+.hand-conductor {
+  fill: #e2e8f0;
+  stroke: #111827;
+  stroke-width: 2.2;
+}
+
+.hand-current-mark circle:first-child {
+  fill: #fee2e2;
+  stroke: var(--red);
+  stroke-width: 2.4;
+}
+
+.hand-current-mark circle:last-child {
+  fill: #111827;
+}
+
+.hand-current-mark line {
+  stroke: #111827;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.hand-current-mark,
+.hand-motion-line,
+.hand-force-line,
+.hand-emf-meter {
+  opacity: 0.48;
+}
+
+.hand-current-mark.is-active,
+.hand-motion-line.is-active,
+.hand-force-line.is-active,
+.hand-emf-meter.is-active {
+  opacity: 1;
+}
+
+.hand-motion-line,
+.hand-force-line {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.hand-emf-meter path {
+  fill: none;
+  stroke: var(--purple);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+}
+
+.hand-emf-meter rect {
+  fill: #ede9fe;
+  stroke: var(--purple);
+  stroke-width: 2.2;
+}
+
+.hand-emf-meter text {
+  fill: var(--purple);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.hand-step {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.hand-step.is-active {
+  fill: #d1fae5;
+  stroke: var(--green);
+  stroke-width: 2.4;
 }
 
 .figure32-svg {

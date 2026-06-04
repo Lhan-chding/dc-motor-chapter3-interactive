@@ -2,6 +2,7 @@ import { HashRouter, Link, Navigate, Route, Routes, useParams } from "react-rout
 import { ArrowRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import DcMotorOverviewDemo from "./animations/DcMotorOverviewDemo";
+import HandRuleDemo from "./animations/HandRuleDemo";
 import TorqueProductionDemo from "./animations/TorqueProductionDemo";
 import CommutatorRoleDemo from "./animations/CommutatorRoleDemo";
 import CommutationProcessDemo from "./animations/CommutationProcessDemo";
@@ -43,6 +44,7 @@ import { ArrowDefs, MotorSketch } from "./animations/shared";
 
 const demos: Record<string, React.ComponentType> = {
   DcMotorOverviewDemo,
+  HandRuleDemo,
   TorqueProductionDemo,
   CommutatorRoleDemo,
   CommutationProcessDemo,

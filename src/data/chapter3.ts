@@ -50,6 +50,31 @@ export const chapterSections: SectionData[] = [
     commonMistakes: [mistakes.formula]
   },
   {
+    id: "3-1-1",
+    title: "3.1.1 左右手定则",
+    subtitle: "电动机与发电机的判向工具",
+    route: "/section/3-1-1",
+    bigQuestion: "什么时候用左手，什么时候用右手？",
+    keywords: ["左手定则", "右手定则", "磁场", "电流方向"],
+    coreFormulas: ["f-bil", "e-ke-phi-n"],
+    demo: "HandRuleDemo",
+    takeaways: ["左手判断电磁力", "右手判断感应电势", "先定 B 再定方向"],
+    briefConcepts: [
+      { title: "左手", oneLine: "用于电动机：B 与 I 决定 F" },
+      { title: "右手", oneLine: "用于发电机：v 与 B 决定 E" },
+      { title: "磁场", oneLine: "外磁场方向默认从 N 指向 S" }
+    ],
+    speakerNotes: [
+      "先让学生只记用途：左手看电流受力，右手看运动感应。",
+      "讲电动机时不要混入右手定则；讲反电动势时再切到右手定则。",
+      "点表示电流或电势出纸面，叉表示入纸面。"
+    ],
+    commonMistakes: [
+      { wrong: "电动机转矩用右手判", correct: "载流导体受力用左手定则" },
+      { wrong: "看到导体运动就用左手", correct: "运动感应电势用右手定则" }
+    ]
+  },
+  {
     id: "3-2",
     title: "3.2 转矩产生机理",
     subtitle: "从载流导体到电磁转矩",
