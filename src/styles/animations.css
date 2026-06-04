@@ -1684,6 +1684,150 @@
   border-radius: 8px;
 }
 
+.armature-reaction-book-svg,
+.max-power-book-svg,
+.transient-book-svg {
+  width: 100%;
+  height: 100%;
+  min-height: 430px;
+  background: #f8fafc;
+}
+
+.book-figure-panel,
+.book-subpanel {
+  fill: #ffffff;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.book-pole,
+.book-bar {
+  fill: #e7e5e4;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.book-bar-fill {
+  fill: #d4d4d4;
+  stroke: #111827;
+  stroke-width: 1.5;
+}
+
+.book-field-line,
+.book-armature-field,
+.book-axis,
+.book-guide,
+.book-running-guide,
+.book-power-curve,
+.book-speed-curve,
+.book-current-curve {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.book-field-line {
+  stroke: #111827;
+  stroke-width: 2.4;
+  stroke-dasharray: 10 7;
+}
+
+.book-armature-field {
+  stroke: #111827;
+  stroke-width: 3;
+}
+
+.book-axis {
+  stroke: #111827;
+  stroke-width: 3;
+}
+
+.book-guide,
+.book-running-guide {
+  stroke: #64748b;
+  stroke-width: 1.8;
+  stroke-dasharray: 8 7;
+}
+
+.book-guide.faint {
+  opacity: 0.36;
+}
+
+.book-running-guide {
+  opacity: 0.72;
+}
+
+.book-power-curve,
+.book-speed-curve,
+.book-current-curve {
+  stroke: #111827;
+  stroke-width: 4;
+}
+
+.book-current-curve {
+  stroke-dasharray: 9 6;
+}
+
+.book-arrow-head {
+  fill: #111827;
+}
+
+.book-point,
+.book-live-point {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 3;
+}
+
+.book-live-point {
+  fill: #111827;
+}
+
+.book-title,
+.book-pole-text,
+.book-equation,
+.book-axis-label,
+.book-caption,
+.book-note,
+.book-small,
+.book-stage-text {
+  fill: #111827;
+  font-weight: 900;
+}
+
+.book-title {
+  font-size: 25px;
+}
+
+.book-pole-text {
+  font-size: 42px;
+}
+
+.book-equation {
+  font-size: 19px;
+}
+
+.book-axis-label,
+.book-caption {
+  font-size: 18px;
+}
+
+.book-note,
+.book-small {
+  font-size: 15px;
+}
+
+.book-stage {
+  fill: #ffffff;
+  stroke: #111827;
+  stroke-width: 2;
+}
+
+.book-stage.is-active {
+  fill: #f1f5f9;
+  stroke-width: 3;
+}
+
 .rule-panel {
   fill: #ffffff;
   stroke: var(--border);

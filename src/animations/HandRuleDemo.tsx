@@ -97,15 +97,18 @@ function ApplicationSketch({ mode, activeStep, time }: { mode: RuleMode; activeS
 
       <rect x="24" y="24" width="472" height="312" rx="8" className="rule-panel" />
       <text x="260" y="62" textAnchor="middle" className="rule-heading">
-        {isLeft ? "电动机：B、I 判 F" : "发电机：v、B 判 E"}
+        {isLeft ? "应用图：电动机中判受力" : "应用图：发电机中判电势"}
+      </text>
+      <text x="260" y="88" textAnchor="middle" className="rule-subheading">
+        {isLeft ? "把左手定则放到导体受力问题中" : "把右手定则放到导体切割磁场问题中"}
       </text>
 
-      <rect x="58" y="116" width="108" height="160" className="rule-pole" />
-      <rect x="354" y="116" width="108" height="160" className="rule-pole" />
-      <text x="112" y="188" textAnchor="middle" className="rule-pole-text">N</text>
-      <text x="408" y="188" textAnchor="middle" className="rule-pole-text">S</text>
+      <rect x="58" y="126" width="108" height="150" className="rule-pole" />
+      <rect x="354" y="126" width="108" height="150" className="rule-pole" />
+      <text x="112" y="196" textAnchor="middle" className="rule-pole-text">N</text>
+      <text x="408" y="196" textAnchor="middle" className="rule-pole-text">S</text>
 
-      {[142, 174, 206, 238].map((y) => (
+      {[150, 180, 210, 240].map((y) => (
         <path
           key={y}
           d={`M 178 ${y} H 342`}
@@ -113,7 +116,7 @@ function ApplicationSketch({ mode, activeStep, time }: { mode: RuleMode; activeS
           markerEnd="url(#rule-app-arrow-blue)"
         />
       ))}
-      <text x="260" y="108" textAnchor="middle" className="rule-label rule-label--blue">B</text>
+      <text x="260" y="120" textAnchor="middle" className="rule-label rule-label--blue">B</text>
 
       <g transform={`translate(260 ${conductorY})`}>
         <rect x="-14" y="-78" width="28" height="156" rx="14" className="rule-conductor" />

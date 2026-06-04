@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { armatureTimeConstant, electromechanicalTimeConstant } from "../utils/motorMath";
-import { DemoFrame, Plot, Readout, useDemoClock } from "./shared";
+import { DemoFrame, Readout, useDemoClock } from "./shared";
+
+function responsePath(kind: "rise" | "decay", x0: number, y0: number, width: number, height: number, scale = 1) {
+  return Array.from({ length: 110 }, (_, index) => {
+    const t = (index / 109) * 5;
+    const value = kind === "rise" ? 1 - Math.exp(-t) : Math.exp(-t * scale);
+    const x = x0 + (t / 5) * width;
+    const y = y0 - value * height;
+    return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ");
+}
 
 export default function TransientResponseDemo() {
   const [playing, setPlaying] = useState(false);
@@ -13,28 +23,38 @@ export default function TransientResponseDemo() {
   const { time, reset } = useDemoClock(playing, 1);
   const tau = electromechanicalTimeConstant(R, J, k);
   const ta = armatureTimeConstant(L, R);
-  const normalizedT = Math.min(5, time / Math.max(0.05, tau));
-  const speed = (V2 / k) * (1 - Math.exp(-normalizedT));
-  const current = ((V2 - V1) / R) * Math.exp(-time / Math.max(0.03, ta));
-  const speedPoints: Array<[number, number]> = Array.from({ length: 100 }, (_, i) => {
-    const x = (i / 99) * 5;
-    return [x, 1 - Math.exp(-x)] as [number, number];
-  });
-  const currentPoints: Array<[number, number]> = Array.from({ length: 100 }, (_, i) => {
-    const x = (i / 99) * 5;
-    return [x, Math.exp(-x * tau / Math.max(0.03, ta))] as [number, number];
-  });
+  const tTau = Math.min(5, time / Math.max(0.05, tau));
+  const tTa = Math.min(5, time / Math.max(0.03, ta));
+  const finalSpeed = V2 / k;
+  const speed = finalSpeed * (1 - Math.exp(-tTau));
+  const startCurrent = (V2 - V1) / R;
+  const current = startCurrent * Math.exp(-time / Math.max(0.03, ta));
+  const speedX = 86 + (tTau / 5) * 390;
+  const speedY = 304 - (1 - Math.exp(-tTau)) * 190;
+  const currentX = 586 + (tTa / 5) * 390;
+  const currentY = 304 - Math.exp(-tTa * tau / Math.max(0.03, ta)) * 190;
 
   return (
     <DemoFrame
-      status={playing ? "电压阶跃后：电流先变化，转速随后逼近稳态" : "点击电压阶跃，观察 1τ 到 5τ"}
+      status={playing ? "电压阶跃后：电流先变，转速按时间常数逼近稳态" : "点击电压阶跃，观察 1τ 到 5τ"}
       playing={playing}
       onToggle={() => setPlaying((value) => !value)}
       onReset={() => {
         reset();
         setPlaying(false);
       }}
-      actions={<button type="button" className="pill-button" onClick={() => { reset(); setPlaying(true); }}>电压阶跃</button>}
+      actions={
+        <button
+          type="button"
+          className="pill-button"
+          onClick={() => {
+            reset();
+            setPlaying(true);
+          }}
+        >
+          电压阶跃
+        </button>
+      }
       sliders={[
         { label: "初始电压", symbol: "V1", value: V1, min: 0, max: 300, step: 10, unit: "V", onChange: setV1 },
         { label: "阶跃电压", symbol: "V2", value: V2, min: 60, max: 400, step: 10, unit: "V", onChange: setV2 },
@@ -52,16 +72,59 @@ export default function TransientResponseDemo() {
         </>
       }
     >
-      <div className="demo-split">
-        <Plot points={speedPoints} marker={[normalizedT, Math.min(1, speed / Math.max(1, V2 / k))]} xLabel="t/τ" yLabel="ω" color="green" />
-        <Plot points={currentPoints} marker={[Math.min(5, time / Math.max(0.03, ta)), Math.max(0, current / Math.max(1, (V2 - V1) / R))]} xLabel="t/Ta" yLabel="I" color="red" />
-      </div>
-      <div className="zone-labels">
-        <span>1τ</span>
-        <span>2τ</span>
-        <span>3τ</span>
-        <span>4～5τ 近稳态</span>
-      </div>
+      <svg className="transient-book-svg" viewBox="0 0 1040 520" role="img" aria-label="直流电机瞬态响应线稿图">
+        <defs>
+          <marker id="transient-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" className="book-arrow-head" />
+          </marker>
+        </defs>
+        <rect x="34" y="34" width="972" height="452" rx="8" className="book-figure-panel" />
+        <text x="520" y="72" textAnchor="middle" className="book-title">电压阶跃后的两个时间尺度</text>
+
+        <g aria-label="转速响应">
+          <line x1="86" y1="304" x2="498" y2="304" className="book-axis" markerEnd="url(#transient-arrow)" />
+          <line x1="86" y1="304" x2="86" y2="88" className="book-axis" markerEnd="url(#transient-arrow)" />
+          <text x="80" y="92" textAnchor="end" className="book-axis-label">ω</text>
+          <text x="490" y="332" textAnchor="end" className="book-axis-label">t/τ</text>
+          {[1, 2, 3, 4, 5].map((n) => {
+            const x = 86 + (n / 5) * 390;
+            return (
+              <g key={n}>
+                <line x1={x} y1="304" x2={x} y2="104" className={n === 5 ? "book-guide" : "book-guide faint"} />
+                <text x={x} y="330" textAnchor="middle" className="book-small">{n}τ</text>
+              </g>
+            );
+          })}
+          <path d={responsePath("rise", 86, 304, 390, 190)} className="book-speed-curve" />
+          <circle cx={speedX} cy={speedY} r="7" className="book-live-point" />
+          <text x="240" y="116" className="book-note">转速不能瞬间变化</text>
+        </g>
+
+        <g aria-label="电流响应">
+          <line x1="586" y1="304" x2="998" y2="304" className="book-axis" markerEnd="url(#transient-arrow)" />
+          <line x1="586" y1="304" x2="586" y2="88" className="book-axis" markerEnd="url(#transient-arrow)" />
+          <text x="580" y="92" textAnchor="end" className="book-axis-label">I</text>
+          <text x="990" y="332" textAnchor="end" className="book-axis-label">t/Ta</text>
+          {[1, 2, 3, 4, 5].map((n) => {
+            const x = 586 + (n / 5) * 390;
+            return (
+              <g key={n}>
+                <line x1={x} y1="304" x2={x} y2="104" className={n === 5 ? "book-guide" : "book-guide faint"} />
+                <text x={x} y="330" textAnchor="middle" className="book-small">{n}Ta</text>
+              </g>
+            );
+          })}
+          <path d={responsePath("decay", 586, 304, 390, 190, tau / Math.max(0.03, ta))} className="book-current-curve" />
+          <circle cx={currentX} cy={currentY} r="7" className="book-live-point" />
+          <text x="722" y="116" className="book-note">电流受电感限制</text>
+        </g>
+
+        <g transform="translate(250 384)" aria-label="时间常数提示">
+          <rect x="0" y="0" width="540" height="58" rx="6" className="book-subpanel" />
+          <text x="270" y="24" textAnchor="middle" className="book-equation">τ = RJ/k²，Ta = L/R</text>
+          <text x="270" y="44" textAnchor="middle" className="book-note">约 4~5 个时间常数后，工程上可认为接近稳态</text>
+        </g>
+      </svg>
     </DemoFrame>
   );
 }
