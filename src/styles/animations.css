@@ -1555,13 +1555,32 @@
 .role-torque-arrow {
   fill: none;
   stroke: #111827;
-  stroke-width: 4;
+  stroke-width: 3.2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .role-torque-arrow--reverse {
   stroke-dasharray: 7 5;
+}
+
+.role-motion-arrow {
+  fill: none;
+  stroke: #64748b;
+  stroke-width: 4.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.role-motion-arrow--reverse {
+  stroke: var(--amber);
+}
+
+.role-motion-label,
+.role-torque-label {
+  fill: #111827;
+  font-size: 15px;
+  font-weight: 900;
 }
 
 .figure32-svg {

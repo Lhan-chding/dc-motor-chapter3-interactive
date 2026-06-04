@@ -46,10 +46,12 @@ function CurrentDotCross({
 
 function BookCommutatorRoleFigure({
   angle,
-  mode
+  mode,
+  motionForward
 }: {
   angle: number;
   mode: Mode;
+  motionForward: boolean;
 }) {
   const aAngle = 130 + angle;
   const bAngle = aAngle + 180;
@@ -58,6 +60,9 @@ function BookCommutatorRoleFigure({
   const sideAOut = mode === "with" ? sideA.x > ROLE_CENTER.x : false;
   const sideBOut = mode === "with" ? sideB.x > ROLE_CENTER.x : true;
   const torquePositive = mode === "with" ? true : sideA.x < ROLE_CENTER.x;
+  const motionArrowPath = motionForward ? "M 184 112 A 112 112 0 0 0 190 252" : "M 376 112 A 112 112 0 0 1 370 252";
+  const leftInnerArrow = motionForward ? "M 220 140 A 76 76 0 0 0 206 210" : "M 206 210 A 76 76 0 0 1 220 140";
+  const rightInnerArrow = motionForward ? "M 340 216 A 76 76 0 0 0 354 146" : "M 354 146 A 76 76 0 0 1 340 216";
 
   return (
     <svg className="figure-role-svg" viewBox="0 0 560 360" role="img" aria-label="换向器作用的单线圈直流电机示意">
@@ -84,8 +89,8 @@ function BookCommutatorRoleFigure({
       <circle cx={ROLE_CENTER.x} cy={ROLE_CENTER.y} r="108" className="figure34-airgap" />
       <g transform={`rotate(${angle} ${ROLE_CENTER.x} ${ROLE_CENTER.y})`}>
         <circle cx={ROLE_CENTER.x} cy={ROLE_CENTER.y} r="78" className="figure34-coil-track" />
-        <path d="M 220 140 A 76 76 0 0 0 206 210" className="figure34-inner-arrow" markerEnd="url(#role-arrow)" />
-        <path d="M 340 216 A 76 76 0 0 0 354 146" className="figure34-inner-arrow" markerEnd="url(#role-arrow)" />
+        <path d={leftInnerArrow} className="figure34-inner-arrow" markerEnd="url(#role-arrow)" />
+        <path d={rightInnerArrow} className="figure34-inner-arrow" markerEnd="url(#role-arrow)" />
         {mode === "with" ? (
           <>
             <path d="M 238 178 A 42 42 0 0 1 322 178 L 306 194 A 24 24 0 0 0 254 194 Z" className="figure34-commutator-segment" />
@@ -106,10 +111,18 @@ function BookCommutatorRoleFigure({
       <CurrentDotCross point={sideB} label="b" out={sideBOut} />
 
       <path
-        d={torquePositive ? "M 184 112 A 112 112 0 0 0 190 252" : "M 376 112 A 112 112 0 0 1 370 252"}
+        d={motionArrowPath}
+        className={motionForward ? "role-motion-arrow" : "role-motion-arrow role-motion-arrow--reverse"}
+        markerEnd="url(#role-arrow)"
+      />
+      <text x={motionForward ? 170 : 390} y="98" className="role-motion-label">n</text>
+
+      <path
+        d={torquePositive ? "M 205 126 A 94 94 0 0 0 210 236" : "M 355 126 A 94 94 0 0 1 350 236"}
         className={torquePositive ? "role-torque-arrow" : "role-torque-arrow role-torque-arrow--reverse"}
         markerEnd="url(#role-arrow)"
       />
+      <text x={torquePositive ? 198 : 348} y="122" className="role-torque-label">T</text>
       </g>
     </svg>
   );
@@ -123,10 +136,17 @@ export default function CommutatorRoleDemo() {
   const phaseAngle = (time * speed) % 360;
   const returning = mode === "without" && phaseAngle > 180;
   const angle = mode === "without" ? (returning ? 360 - phaseAngle : phaseAngle) : phaseAngle;
+  const motionForward = mode === "with" || !returning;
   const rad = (phaseAngle * Math.PI) / 180;
   const rawTorque = Math.sin(rad);
   const visibleTorque = mode === "with" ? Math.abs(rawTorque) : rawTorque;
   const motionState = mode === "with" ? "连续旋转" : returning ? "反向回摆" : "正向半周";
+  const status =
+    mode === "with"
+      ? "换向器每半周反接，转矩保持同向"
+      : returning
+        ? "无换向器：a 边到 S 极，T 反向并回摆"
+        : "无换向器：电流不换向，只能先转半周";
 
   const points = useMemo(
     () =>
@@ -140,7 +160,7 @@ export default function CommutatorRoleDemo() {
 
   return (
     <DemoFrame
-      status={mode === "with" ? "换向器每半周反接，转矩保持同向" : "无换向器：半周后转矩反向，转子回摆"}
+      status={status}
       playing={playing}
       onToggle={() => setPlaying((value) => !value)}
       onReset={reset}
@@ -159,11 +179,12 @@ export default function CommutatorRoleDemo() {
         <>
           <Readout label="转矩方向" value={visibleTorque >= 0 ? "正向" : "反向"} tone={visibleTorque >= 0 ? "green" : "amber"} />
           <Readout label="转子运动" value={motionState} tone={returning ? "amber" : "green"} />
+          <Readout label="电流连接" value={mode === "with" ? "半周反接" : "固定不变"} tone={mode === "with" ? "green" : "amber"} />
         </>
       }
     >
       <div className="demo-split">
-        <BookCommutatorRoleFigure angle={-angle} mode={mode} />
+        <BookCommutatorRoleFigure angle={-angle} mode={mode} motionForward={motionForward} />
         <Plot points={points} marker={[phaseAngle, visibleTorque]} xLabel="角度" yLabel="T" color={mode === "with" ? "green" : "amber"} label={mode === "with" ? "有换向器：转矩保持正向" : "无换向器：转矩正负交替"} />
       </div>
     </DemoFrame>
