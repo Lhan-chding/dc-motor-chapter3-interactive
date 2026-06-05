@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { armatureTimeConstant, electromechanicalTimeConstant } from "../utils/motorMath";
-import { DemoFrame, Plot, Readout, useDemoClock } from "./shared";
+import { DemoFrame, Readout, useDemoClock } from "./shared";
+
+function risePath(x0: number, y0: number, width: number, height: number, timeConstant: number) {
+  return Array.from({ length: 90 }, (_, index) => {
+    const t = (index / 89) * 5;
+    const y = 1 - Math.exp(-t / Math.max(0.15, timeConstant));
+    const x = x0 + (t / 5) * width;
+    const py = y0 - y * height;
+    return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${py.toFixed(1)}`;
+  }).join(" ");
+}
 
 export default function TimeConstantExplorer() {
   const [playing, setPlaying] = useState(true);
@@ -8,17 +18,20 @@ export default function TimeConstantExplorer() {
   const [J, setJ] = useState(0.18);
   const [k, setK] = useState(1.2);
   const [L, setL] = useState(0.2);
-  const { reset } = useDemoClock(playing, 1);
+  const { time, reset } = useDemoClock(playing, 0.6);
   const tau = electromechanicalTimeConstant(R, J, k);
   const ta = armatureTimeConstant(L, R);
-  const fastMech = Array.from({ length: 80 }, (_, i) => [i / 79, 1 - Math.exp(-(i / 79) * 5 / Math.max(0.2, tau))] as [number, number]);
-  const slowMech = Array.from({ length: 80 }, (_, i) => [i / 79, 1 - Math.exp(-(i / 79) * 5 / Math.max(0.2, tau * 2.2))] as [number, number]);
-  const fastElec = Array.from({ length: 80 }, (_, i) => [i / 79, 1 - Math.exp(-(i / 79) * 5 / Math.max(0.03, ta))] as [number, number]);
-  const slowElec = Array.from({ length: 80 }, (_, i) => [i / 79, 1 - Math.exp(-(i / 79) * 5 / Math.max(0.03, ta * 2.2))] as [number, number]);
+  const t = (time % 5);
+  const mechFast = Math.max(0.18, tau);
+  const mechSlow = mechFast * 2.2;
+  const elecFast = Math.max(0.05, ta);
+  const elecSlow = elecFast * 2.2;
+  const mechNow = 1 - Math.exp(-t / mechFast);
+  const elecNow = 1 - Math.exp(-t / elecFast);
 
   return (
     <DemoFrame
-      status="对比曲线显示：J 控制机械慢快，L 控制电流慢快"
+      status="对比曲线显示：J 控制机械响应，L 控制电流响应"
       playing={playing}
       onToggle={() => setPlaying((value) => !value)}
       onReset={reset}
@@ -35,16 +48,50 @@ export default function TimeConstantExplorer() {
         </>
       }
     >
-      <div className="demo-split">
-        <div>
-          <Plot points={fastMech} xLabel="t" yLabel="小J" color="green" />
-          <Plot points={slowMech} xLabel="t" yLabel="大J" color="amber" />
-        </div>
-        <div>
-          <Plot points={fastElec} xLabel="t" yLabel="小L" color="blue" />
-          <Plot points={slowElec} xLabel="t" yLabel="大L" color="purple" />
-        </div>
-      </div>
+      <svg className="time-constant-book-svg" viewBox="0 0 1040 520" role="img" aria-label="时间常数对响应速度的影响">
+        <defs>
+          <marker id="tc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" className="book-arrow-head" />
+          </marker>
+        </defs>
+        <rect x="34" y="34" width="972" height="452" rx="8" className="book-figure-panel" />
+        <text x="520" y="72" textAnchor="middle" className="book-title">时间常数越大，响应越慢</text>
+
+        <g aria-label="机械时间常数对比">
+          <rect x="70" y="104" width="420" height="300" rx="6" className="book-subpanel" />
+          <text x="280" y="140" textAnchor="middle" className="book-title">机械响应：J 与 k</text>
+          <line x1="116" y1="332" x2="456" y2="332" className="book-axis" markerEnd="url(#tc-arrow)" />
+          <line x1="116" y1="332" x2="116" y2="166" className="book-axis" markerEnd="url(#tc-arrow)" />
+          <text x="108" y="176" textAnchor="end" className="book-axis-label">ω</text>
+          <text x="448" y="358" textAnchor="end" className="book-axis-label">t</text>
+          <path d={risePath(116, 332, 318, 138, mechFast)} className="book-speed-curve" />
+          <path d={risePath(116, 332, 318, 138, mechSlow)} className="book-slow-curve" />
+          <line x1={116 + (t / 5) * 318} y1="332" x2={116 + (t / 5) * 318} y2={332 - mechNow * 138} className="book-running-guide" />
+          <circle cx={116 + (t / 5) * 318} cy={332 - mechNow * 138} r="6" className="book-live-point" />
+          <text x="148" y="196" className="book-small">小 J：快</text>
+          <text x="302" y="256" className="book-small">大 J：慢</text>
+        </g>
+
+        <g aria-label="电枢时间常数对比">
+          <rect x="550" y="104" width="420" height="300" rx="6" className="book-subpanel" />
+          <text x="760" y="140" textAnchor="middle" className="book-title">电流响应：L 与 R</text>
+          <line x1="596" y1="332" x2="936" y2="332" className="book-axis" markerEnd="url(#tc-arrow)" />
+          <line x1="596" y1="332" x2="596" y2="166" className="book-axis" markerEnd="url(#tc-arrow)" />
+          <text x="588" y="176" textAnchor="end" className="book-axis-label">I</text>
+          <text x="928" y="358" textAnchor="end" className="book-axis-label">t</text>
+          <path d={risePath(596, 332, 318, 138, elecFast)} className="book-current-curve solid" />
+          <path d={risePath(596, 332, 318, 138, elecSlow)} className="book-slow-curve" />
+          <line x1={596 + (t / 5) * 318} y1="332" x2={596 + (t / 5) * 318} y2={332 - elecNow * 138} className="book-running-guide" />
+          <circle cx={596 + (t / 5) * 318} cy={332 - elecNow * 138} r="6" className="book-live-point" />
+          <text x="628" y="196" className="book-small">小 L：快</text>
+          <text x="790" y="256" className="book-small">大 L：慢</text>
+        </g>
+
+        <g transform="translate(250 430)" aria-label="时间常数公式">
+          <rect x="0" y="0" width="540" height="36" rx="6" className="book-subpanel" />
+          <text x="270" y="24" textAnchor="middle" className="book-equation">τ = RJ/k²，Ta = L/R</text>
+        </g>
+      </svg>
     </DemoFrame>
   );
 }

@@ -1686,7 +1686,9 @@
 
 .armature-reaction-book-svg,
 .max-power-book-svg,
-.transient-book-svg {
+.transient-book-svg,
+.time-constant-book-svg,
+.four-quadrant-book-svg {
   width: 100%;
   height: 100%;
   min-height: 430px;
@@ -1720,7 +1722,8 @@
 .book-running-guide,
 .book-power-curve,
 .book-speed-curve,
-.book-current-curve {
+.book-current-curve,
+.book-slow-curve {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -1759,13 +1762,24 @@
 
 .book-power-curve,
 .book-speed-curve,
-.book-current-curve {
+.book-current-curve,
+.book-slow-curve {
   stroke: #111827;
   stroke-width: 4;
 }
 
 .book-current-curve {
   stroke-dasharray: 9 6;
+}
+
+.book-current-curve.solid {
+  stroke-dasharray: none;
+}
+
+.book-slow-curve {
+  stroke-width: 3;
+  stroke-dasharray: 10 8;
+  opacity: 0.72;
 }
 
 .book-arrow-head {
@@ -1826,6 +1840,12 @@
 .book-stage.is-active {
   fill: #f1f5f9;
   stroke-width: 3;
+}
+
+.book-quadrant-label {
+  fill: #475569;
+  font-size: 22px;
+  font-weight: 900;
 }
 
 .rule-panel {
