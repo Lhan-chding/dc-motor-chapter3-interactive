@@ -11,6 +11,7 @@ const MOTOR_CENTER: Point = { x: 240, y: 166 };
 const SPEED_AXIS_MAX = 800;
 const TORQUE_AXIS_MAX = 360;
 const POWER_AXIS_MAX = 60000;
+const WEAK_CURVE_SAMPLES = 28;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -30,6 +31,10 @@ function graphX(origin: number, width: number, value: number, axisMax: number) {
 
 function graphY(bottom: number, top: number, value: number, axisMax: number) {
   return bottom - clamp(value / axisMax, 0, 1) * (bottom - top);
+}
+
+function pointsToPath(points: Point[]) {
+  return points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
 }
 
 function BookWeakFieldMotor({ angle, phi }: { angle: number; phi: number }) {
@@ -117,10 +122,20 @@ function BookWeakFieldFigure({
   const torquePointY = graphY(torqueBase, torqueTop, maxTorque, TORQUE_AXIS_MAX);
   const powerPointY = graphY(powerBase, powerTop, maxPower, POWER_AXIS_MAX);
   const areaRightEnd = graph.x + graph.width;
+  const weakCurveDenominator = Math.max(WEAK_CURVE_SAMPLES - 1, 1);
+  const weakCurvePoints = Array.from({ length: WEAK_CURVE_SAMPLES }, (_, index) => {
+    const ratio = index / weakCurveDenominator;
+    const speed = ratedSpeed + (SPEED_AXIS_MAX - ratedSpeed) * ratio;
+    const torque = Math.min(ratedTorque, maxPower / Math.max(speed, 1e-6));
+    return {
+      x: graphX(graph.x, graph.width, speed, SPEED_AXIS_MAX),
+      y: graphY(torqueBase, torqueTop, torque, TORQUE_AXIS_MAX)
+    };
+  });
   const torqueAtAxisEnd = Math.min(ratedTorque, maxPower / SPEED_AXIS_MAX);
   const curveEndY = graphY(torqueBase, torqueTop, torqueAtAxisEnd, TORQUE_AXIS_MAX);
-  const weakCurve = `M ${ratedX} ${ratedTorqueY} C ${ratedX + 66} ${ratedTorqueY + 22}, ${areaRightEnd - 116} ${curveEndY - 12}, ${areaRightEnd} ${curveEndY}`;
-  const weakArea = `M ${ratedX} ${ratedTorqueY} C ${ratedX + 66} ${ratedTorqueY + 22}, ${areaRightEnd - 116} ${curveEndY - 12}, ${areaRightEnd} ${curveEndY} L ${areaRightEnd} ${torqueBase} H ${ratedX} Z`;
+  const weakCurve = pointsToPath(weakCurvePoints);
+  const weakArea = `${weakCurve} L ${areaRightEnd} ${torqueBase} H ${ratedX} Z`;
   const showWeakPoint = phi < 0.98;
   const outOfRange = maxSpeed > SPEED_AXIS_MAX;
 
@@ -170,13 +185,15 @@ function BookWeakFieldFigure({
         <text x={ratedX - 6} y={ratedTorqueY - 12} className="weak-field-small">b</text>
         <text x={ratedX - 6} y={torqueBase + 20} className="weak-field-small">c</text>
         {showWeakPoint ? <text x={pointX + 14} y={torquePointY - 13} className="weak-field-small">{outOfRange ? "限速" : "e"}</text> : null}
-        <rect x={graph.x + 28} y={torqueBase - 32} width="78" height="23" rx="3" className="weak-field-label-bg" />
-        <text x={graph.x + 67} y={torqueBase - 16} textAnchor="middle" className="weak-field-area-label">恒转矩区</text>
-        <rect x={graph.x + graph.width - 132} y={torqueTop + 16} width="74" height="23" rx="3" className="weak-field-label-bg" />
-        <text x={graph.x + graph.width - 95} y={torqueTop + 32} textAnchor="middle" className="weak-field-area-label">弱磁区</text>
-        <path d={`M ${ratedX + 92} ${ratedTorqueY + 50} L ${ratedX + 28} ${ratedTorqueY + 20}`} className="weak-field-callout" markerEnd="url(#weak-plot-arrow)" />
-        <rect x={ratedX + 94} y={ratedTorqueY + 27} width="68" height="22" rx="3" className="weak-field-label-bg" />
-        <text x={ratedX + 128} y={ratedTorqueY + 43} textAnchor="middle" className="weak-field-small">额定转速</text>
+        <rect x={graph.x + 26} y={torqueBase - 35} width="92" height="24" rx="3" className="weak-field-label-bg" />
+        <text x={graph.x + 72} y={torqueBase - 18} textAnchor="middle" className="weak-field-area-label">恒转矩区</text>
+        <rect x={graph.x + graph.width - 156} y={torqueTop + 20} width="118" height="24" rx="3" className="weak-field-label-bg" />
+        <text x={graph.x + graph.width - 97} y={torqueTop + 37} textAnchor="middle" className="weak-field-area-label">弱磁恒功率区</text>
+        <rect x={ratedX - 52} y={graph.torqueY - 16} width="104" height="24" rx="3" className="weak-field-label-bg" />
+        <text x={ratedX} y={graph.torqueY + 1} textAnchor="middle" className="weak-field-area-label">基速边界</text>
+        <path d={`M ${ratedX + 96} ${ratedTorqueY + 38} L ${ratedX + 30} ${ratedTorqueY + 14}`} className="weak-field-callout" markerEnd="url(#weak-plot-arrow)" />
+        <rect x={ratedX + 98} y={ratedTorqueY + 16} width="124" height="24" rx="3" className="weak-field-label-bg" />
+        <text x={ratedX + 160} y={ratedTorqueY + 33} textAnchor="middle" className="weak-field-small">T=Pmax/ω</text>
         {showWeakPoint ? <circle cx={pointX} cy={torquePointY} r="7" className="weak-field-point weak-field-point--live" /> : null}
       </g>
 
@@ -198,7 +215,7 @@ function BookWeakFieldFigure({
         </text>
       </g>
 
-      <text x="40" y="532" className="weak-field-footnote">Vmax {formatNumber(vmax, 0)}V，Imax {formatNumber(imax, 0)}A，k {formatNumber(k, 2)}：拖动滑块会移动额定线、弱磁点和功率平台。</text>
+      <text x="40" y="532" className="weak-field-footnote">左区调压：Tmax 不变、转速可变；过基速后弱磁：P≈VmaxImax，Tmax=Pmax/ω。</text>
     </svg>
   );
 }
