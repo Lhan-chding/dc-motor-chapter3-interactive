@@ -79,4 +79,26 @@ describe("motorMath", () => {
     expect(final.electromagneticTorque).toBeCloseTo(0.5, 1);
     expect(final.omega).toBeCloseTo(1.5, 1);
   });
+
+  it("solves no-load voltage step toward V over k with zero steady current", () => {
+    const samples = solveDcMotorTransient({
+      voltage: 12,
+      resistance: 2,
+      motorConstant: 1.5,
+      inductance: 0.12,
+      inertia: 0.18,
+      initialCurrent: 0,
+      initialOmega: 4,
+      duration: 3,
+      dt: 0.001,
+      sampleInterval: 0.05,
+      loadTorque: () => 0
+    });
+    const final = samples[samples.length - 1];
+    const peakCurrent = Math.max(...samples.map((sample) => sample.current));
+
+    expect(peakCurrent).toBeGreaterThan(0);
+    expect(final.omega).toBeCloseTo(8, 1);
+    expect(final.current).toBeCloseTo(0, 1);
+  });
 });
