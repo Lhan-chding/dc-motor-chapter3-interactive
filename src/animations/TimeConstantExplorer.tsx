@@ -31,7 +31,7 @@ export default function TimeConstantExplorer() {
 
   return (
     <DemoFrame
-      status="对比曲线显示：J 控制机械响应，L 控制电流响应"
+      status="实线表示较快响应，虚线表示较慢响应；竖虚线表示当前时刻"
       playing={playing}
       onToggle={() => setPlaying((value) => !value)}
       onReset={reset}
@@ -68,6 +68,7 @@ export default function TimeConstantExplorer() {
           <path d={risePath(116, 332, 318, 138, mechSlow)} className="book-slow-curve" />
           <line x1={116 + (t / 5) * 318} y1="332" x2={116 + (t / 5) * 318} y2={332 - mechNow * 138} className="book-running-guide" />
           <circle cx={116 + (t / 5) * 318} cy={332 - mechNow * 138} r="6" className="book-live-point" />
+          <text x={126 + (t / 5) * 318} y="322" className="book-small">当前时刻</text>
           <text x="148" y="196" className="book-small">小 J：快</text>
           <text x="302" y="256" className="book-small">大 J：慢</text>
         </g>
@@ -83,6 +84,7 @@ export default function TimeConstantExplorer() {
           <path d={risePath(596, 332, 318, 138, elecSlow)} className="book-slow-curve" />
           <line x1={596 + (t / 5) * 318} y1="332" x2={596 + (t / 5) * 318} y2={332 - elecNow * 138} className="book-running-guide" />
           <circle cx={596 + (t / 5) * 318} cy={332 - elecNow * 138} r="6" className="book-live-point" />
+          <text x={606 + (t / 5) * 318} y="322" className="book-small">当前时刻</text>
           <text x="628" y="196" className="book-small">小 L：快</text>
           <text x="790" y="256" className="book-small">大 L：慢</text>
         </g>
