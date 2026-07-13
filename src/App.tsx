@@ -232,18 +232,27 @@ function StudyNotes({ section }: { section: SectionData }) {
 
 function QuizCenter({ mode }: { mode: StudyMode }) {
   return (
-    <div className="quiz-center">
-      <div className="quiz-center__header">
-        <h2>练习中心</h2>
-        <p>短题、短选项、点击反馈</p>
-      </div>
-      <div className="quiz-grid">
-        {quizzes.map((quiz) => (
-          <QuizCard key={quiz.id} quiz={quiz} />
+    <section className="quiz-sheet" aria-labelledby="quiz-sheet-title">
+      <header className="quiz-sheet-header">
+        <div>
+          <p className="quiz-sheet-kicker">第 3 章 · 课堂练习</p>
+          <h2 id="quiz-sheet-title">直流电机基本关系练习纸</h2>
+        </div>
+        <div className="quiz-sheet-meta" aria-label="练习信息">
+          <span>共 {quizzes.length} 题</span>
+          <span>逐题作答</span>
+        </div>
+      </header>
+      <div className="quiz-sheet-rule" aria-hidden="true" />
+      <div className="quiz-sheet-questions">
+        {quizzes.map((quiz, index) => (
+          <QuizCard key={quiz.id} quiz={quiz} number={index + 1} />
         ))}
       </div>
-      {mode === "lecture" ? <p className="quiet-hint">讲解模式下建议只展示题干和答案反馈。</p> : null}
-    </div>
+      {mode === "lecture" ? (
+        <p className="quiz-sheet-lecture-note">讲解模式：先作答，再按需展开详细推导。</p>
+      ) : null}
+    </section>
   );
 }
 

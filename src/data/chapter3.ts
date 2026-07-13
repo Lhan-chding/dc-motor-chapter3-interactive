@@ -362,7 +362,7 @@ export const chapterSections: SectionData[] = [
     route: "/section/3-6-2",
     bigQuestion: "没有回馈电源时如何制动？",
     keywords: ["制动电阻", "热量", "非节能"],
-    coreFormulas: ["p-cu"],
+    coreFormulas: ["p-brake", "tau-brake"],
     demo: "DynamicBrakingDemo",
     takeaways: ["电机发电", "电阻耗能", "简单但不节能"],
     briefConcepts: [
@@ -442,19 +442,20 @@ export const chapterSections: SectionData[] = [
   },
   {
     id: "3-8",
-    title: "3.8 自励直流电机",
-    subtitle: "剩磁、磁化曲线与工作点",
+    title: "3.8 自励直流发电机",
+    subtitle: "剩磁、正反馈与真实工作点",
     route: "/section/3-8",
-    bigQuestion: "自励电机为什么需要剩磁？",
+    bigQuestion: "自励发电机为什么需要剩磁？",
     keywords: ["自励", "剩磁", "磁化曲线"],
     coreFormulas: ["if-shunt"],
     demo: "SelfExcitationDemo",
     takeaways: ["剩磁是起点", "电阻线决定工作点", "电阻过大不能自励"],
     briefConcepts: [
-      { title: "剩磁", oneLine: "提供最初的小电压" },
-      { title: "交点", oneLine: "磁化曲线与电阻线相交" }
+      { title: "前提", oneLine: "原动机保持发电机转速" },
+      { title: "剩磁", oneLine: "提供正反馈所需的初始电压" },
+      { title: "交点", oneLine: "磁化曲线与电阻线真实相交" }
     ],
-    speakerNotes: ["把自励看作正反馈建立电压，电阻线太陡会失败。"],
+    speakerNotes: ["这里讨论的是自励并励发电机建压：原动机先维持转速，剩磁产生初始电压。"],
     commonMistakes: [{ wrong: "无剩磁也能自然建压", correct: "没有初始磁通就难以起励" }]
   },
   {

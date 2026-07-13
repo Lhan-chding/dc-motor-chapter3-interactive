@@ -23,14 +23,16 @@ export const formulas: Formula[] = [
   { id: "w-load", latex: "\\omega = \\frac{V}{k} - \\frac{R}{k^2}T_L", meaning: "负载使转速下降", usedIn: ["3-4", "3-4-3"], tag: "机械特性" },
   { id: "p-mech", latex: "P_{\\text{mech}} = T\\omega", meaning: "机械功率", usedIn: ["3-4-2", "3-6"], tag: "功率" },
   { id: "p-conv", latex: "P_{\\text{conv}} = EI", meaning: "电磁转换功率", usedIn: ["3-4-2"], tag: "能量" },
-  { id: "p-cu", latex: "P_{\\text{cu}} = I^2R", meaning: "电枢铜耗", usedIn: ["3-4-2", "3-6-2"], tag: "损耗" },
+  { id: "p-cu", latex: "P_{\\text{cu}} = I^2R", meaning: "电枢铜耗", usedIn: ["3-4-2"], tag: "损耗" },
+  { id: "p-brake", latex: "P_{R_b} = I^2R_b", meaning: "制动电阻把动能转化为热", usedIn: ["3-6-2"], tag: "能耗制动" },
+  { id: "tau-brake", latex: "\\tau_b = \\frac{J(R_a+R_b)}{k^2}", meaning: "能耗制动转速衰减时间常数", usedIn: ["3-6-2"], tag: "制动动态" },
   { id: "p-max", latex: "P_{\\max} = \\frac{V^2}{4R}", meaning: "理论最大输出功率", usedIn: ["3-4-6"], tag: "极值" },
   { id: "tau-em", latex: "\\tau = \\frac{RJ}{k^2}", meaning: "机电时间常数", usedIn: ["3-5", "3-5-1"], tag: "时间常数" },
   { id: "tau-arm", latex: "T_a = \\frac{L}{R}", meaning: "电枢时间常数", usedIn: ["3-5", "3-5-1"], tag: "时间常数" },
   { id: "phi-series", latex: "\\Phi \\propto I", meaning: "串励电机磁通随电流变化", usedIn: ["3-7-2"], tag: "串励" },
   { id: "t-series-i2", latex: "T \\propto I^2", meaning: "串励电机低饱和区转矩近似", usedIn: ["3-7-2"], tag: "串励" },
   { id: "t-series-vn", latex: "T \\propto \\left(\\frac{V}{n}\\right)^2", meaning: "串励近似转矩-转速关系", usedIn: ["3-7-2"], tag: "串励" },
-  { id: "if-shunt", latex: "I_f = \\frac{V}{R_f}", meaning: "并励励磁电流", usedIn: ["3-7-1"], tag: "并励" },
+  { id: "if-shunt", latex: "I_f = \\frac{V}{R_f}", meaning: "并励励磁电流", usedIn: ["3-7-1", "3-8"], tag: "并励" },
   { id: "i-start", latex: "I_{\\text{start}} = \\frac{V}{R}", meaning: "起动时反电动势为零", usedIn: ["3-7", "3-10"], tag: "起动" }
 ];
 

@@ -1,57 +1,95 @@
 export type Quiz = {
   id: string;
-  type: "formula" | "state" | "calculation" | "quadrant";
+  type: "状态判断" | "数值计算" | "公式辨析" | "象限判断";
   prompt: string;
   options: string[];
   answer: number;
   explanation: string;
+  optionFeedback: string[];
   detail: string[];
 };
 
 export const quizzes: Quiz[] = [
   {
     id: "q-state-1",
-    type: "state",
-    prompt: "V=200V，E=240V，R>0，此时？",
+    type: "状态判断",
+    prompt: "固定磁通直流电机正向转动，V=200 V、E=240 V、R>0，且电源可吸收能量。此时处于哪种状态？",
     options: ["电动运行", "理想空载", "再生发电"],
     answer: 2,
-    explanation: "E 大于 V，电流反向，机械能可回馈。",
-    detail: ["I=(V-E)/R 为负。", "若转速仍为正，则转矩反向，表现为制动。"]
+    explanation: "E 大于 V，电枢电流反向，机械能经电枢回馈电源。",
+    optionFeedback: [
+      "错误：电动运行要求电源向电机送入电功率，而此时 I=(V-E)/R<0。",
+      "错误：理想空载应满足 E≈V、I≈0；这里 E 明显大于 V。",
+      "正确：E>V 使电流反向，在正转条件下形成再生制动。"
+    ],
+    detail: [
+      "由电枢回路 I=(V-E)/R=(200-240)/R<0。",
+      "若转速仍为正，则 T=kI<0，转矩与转速反向。",
+      "机械功率被转换为电功率并回送电源，因此属于再生发电。"
+    ]
   },
   {
     id: "q-start-1",
-    type: "calculation",
-    prompt: "V=120V，R=2Ω，起动电流为？",
-    options: ["30A", "60A", "240A"],
+    type: "数值计算",
+    prompt: "某直流电机由 120 V 电源直接起动，电枢电阻为 2 Ω。忽略电刷压降，起动电流是多少？",
+    options: ["30 A", "60 A", "240 A"],
     answer: 1,
-    explanation: "起动时 E≈0，所以 I=V/R=60A。",
-    detail: ["起动瞬间转速为零。", "反电动势 E=kω 也近似为零。"]
+    explanation: "起动瞬间转速为零，E≈0，因此 I=V/R=60 A。",
+    optionFeedback: [
+      "错误：30 A 相当于把总电阻误写成 4 Ω。",
+      "正确：起动时 E≈0，120 V÷2 Ω=60 A。",
+      "错误：240 A 来自错误的乘法；欧姆定律应为电压除以电阻。"
+    ],
+    detail: ["起动瞬间 ω=0。", "反电动势 E=K_Eω=0。", "代入 I=(V-E)/R，得 I=(120-0)/2=60 A。"]
   },
   {
     id: "q-torque-1",
-    type: "formula",
-    prompt: "恒磁通时，转矩与哪项成正比？",
+    type: "公式辨析",
+    prompt: "永磁直流电机磁通保持不变时，电磁转矩与下列哪一项成正比？",
     options: ["电枢电流", "电枢电阻", "机械损耗"],
     answer: 0,
-    explanation: "恒磁通下 T=kI，电流直接决定转矩。",
-    detail: ["k 已包含磁通影响。", "若弱磁，k 会随磁通改变。"]
+    explanation: "恒磁通下 T=K_TΦI，可合并为 T=kI。",
+    optionFeedback: [
+      "正确：磁通恒定时，电枢电流直接决定电磁转矩。",
+      "错误：电枢电阻通过回路间接影响电流，但不出现在基本转矩式的正比关系中。",
+      "错误：机械损耗决定轴上净转矩，不决定电磁转矩的产生。"
+    ],
+    detail: ["一般转矩式为 T=K_TΦI。", "永磁体使工作范围内的 Φ 近似恒定。", "令 k=K_TΦ，即得 T=kI。"]
   },
   {
     id: "q-quadrant-1",
-    type: "quadrant",
-    prompt: "ω>0，T<0，运行状态是？",
+    type: "象限判断",
+    prompt: "若电机角速度 ω>0，而电磁转矩 T<0，它处于哪种运行状态？",
     options: ["正转电动", "正转制动", "反转电动"],
     answer: 1,
-    explanation: "转速与转矩异号，机械能被取走。",
-    detail: ["位于第二象限。", "若能量回到电源，就是再生制动。"]
+    explanation: "ω 与 T 异号，机械功率 P=Tω<0，电磁转矩阻碍正向旋转。",
+    optionFeedback: [
+      "错误：正转电动要求 ω>0 且 T>0。",
+      "正确：正转而转矩反向，工作点位于第二象限。",
+      "错误：反转电动要求 ω<0 且 T<0。"
+    ],
+    detail: [
+      "横轴取 ω、纵轴取 T 时，该点位于第二象限。",
+      "P_mech=Tω<0，说明电机从机械端吸收能量。",
+      "能量回到电源时为再生制动，耗散在电阻时为能耗制动。"
+    ]
   },
   {
     id: "q-field-1",
-    type: "state",
-    prompt: "磁通减小，最高转速和最大转矩如何变？",
-    options: ["转速升，转矩降", "转速降，转矩升", "都升高"],
+    type: "状态判断",
+    prompt: "在电压与允许电枢电流不变时，减小磁通会怎样影响最高转速和最大电磁转矩？",
+    options: ["最高转速升高，最大转矩降低", "最高转速降低，最大转矩升高", "两者都升高"],
     answer: 0,
-    explanation: "弱磁可升速，但同电流转矩下降。",
-    detail: ["空载速度约为 V/(K_EΦ)。", "转矩约为 K_TΦI。"]
+    explanation: "弱磁使反电动势常数减小，允许更高转速；同时转矩常数减小。",
+    optionFeedback: [
+      "正确：ω≈V/(K_EΦ)，而 T_max=K_TΦI_max。",
+      "错误：减小 Φ 对转速和转矩的影响方向恰好相反。",
+      "错误：弱磁升速以牺牲单位电流转矩为代价，不能让两者同时升高。"
+    ],
+    detail: [
+      "轻载时 ω≈V/(K_EΦ)，Φ 减小会使可达转速升高。",
+      "电流受限时 T_max=K_TΦI_max，Φ 减小会使最大转矩降低。",
+      "弱磁区通常近似恒功率运行，而不是转速与转矩同时增加。"
+    ]
   }
 ];

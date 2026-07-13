@@ -279,10 +279,11 @@
 
 .formula-block__math {
   min-width: 0;
-  min-height: 44px;
+  min-height: 56px;
+  padding: 8px 0;
   font-size: 20px;
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: hidden;
 }
 
 .formula-block__math .katex-display {
@@ -744,5 +745,239 @@
 
   .quiz-card__options {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Chapter 3.10 uses a continuous textbook worksheet instead of a card grid. */
+.quiz-sheet {
+  min-width: 0;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.quiz-sheet-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.quiz-sheet-kicker {
+  color: var(--blue);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.quiz-sheet-header h2 {
+  margin-top: 6px;
+  font-size: 26px;
+}
+
+.quiz-sheet-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.quiz-sheet-meta span {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.quiz-sheet-rule {
+  height: 2px;
+  margin: 18px 0 4px;
+  background: var(--ink);
+}
+
+.quiz-sheet-questions {
+  display: grid;
+}
+
+.quiz-sheet-question {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 22px 2px;
+  border-bottom: 1px solid var(--border);
+}
+
+.quiz-sheet-question:last-child {
+  border-bottom: 0;
+}
+
+.quiz-sheet-question-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiz-sheet-question-number {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.quiz-sheet-question-type {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.quiz-sheet-question h3 {
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.quiz-sheet-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.quiz-sheet-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 46px;
+  padding: 9px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  background: #ffffff;
+  color: var(--ink);
+  text-align: left;
+  font-weight: 800;
+}
+
+.quiz-sheet-option:not(:disabled):hover {
+  border-color: var(--ink);
+  background: #f8fafc;
+}
+
+.quiz-sheet-option:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.quiz-sheet-option-is-correct,
+.quiz-sheet-option-is-answer {
+  border-color: var(--green);
+  background: #ecfdf5;
+}
+
+.quiz-sheet-option-is-incorrect {
+  border-color: var(--red);
+  background: #fff1f2;
+}
+
+.quiz-sheet-option-letter {
+  font-family: var(--font-mono);
+}
+
+.quiz-sheet-option-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.quiz-sheet-answer-mark {
+  color: #047857;
+  font-size: 12px;
+}
+
+.quiz-sheet-feedback {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 10px;
+  padding: 12px;
+  border-left: 4px solid;
+  background: #f8fafc;
+}
+
+.quiz-sheet-feedback p {
+  margin-top: 3px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.quiz-sheet-feedback-is-correct {
+  border-color: var(--green);
+  color: #047857;
+}
+
+.quiz-sheet-feedback-is-incorrect {
+  border-color: var(--red);
+  color: #b91c1c;
+}
+
+.quiz-sheet-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.quiz-sheet-derivation .foldable {
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.quiz-sheet-derivation-steps {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 22px;
+  line-height: 1.55;
+}
+
+.quiz-sheet-lecture-note {
+  margin-top: 12px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .quiz-sheet {
+    padding: 18px 14px;
+  }
+
+  .quiz-sheet-header {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .quiz-sheet-meta {
+    justify-content: flex-start;
+  }
+
+  .quiz-sheet-options,
+  .quiz-sheet-feedback {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-sheet-option {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .quiz-sheet-retry {
+    width: fit-content;
   }
 }
