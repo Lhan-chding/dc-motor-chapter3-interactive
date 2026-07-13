@@ -2,54 +2,113 @@ import { useState } from "react";
 import { fourQuadrantOperatingPoint } from "../utils/advancedMotorMath";
 import { DemoFrame, Readout, useDemoClock } from "./shared";
 
-type CircuitProps = {
+type Quadrant = 1 | 2 | 3 | 4;
+
+type CircuitSpec = {
+  quadrant: Quadrant;
   x: number;
   y: number;
-  quadrant: 1 | 2 | 3 | 4;
-  active: boolean;
-  liveVoltagePositive?: boolean;
+  machine: "M" | "G";
+  machineSide: "left" | "right";
+  mechanicalPower: "left" | "right";
+  emf: "up" | "down";
+  voltage: "up" | "down";
+  voltageLabel: string;
+  cells: 1 | 2;
+  current: "clockwise" | "counterclockwise";
 };
 
-const quadrantMeta = {
-  1: { label: "正转电动", omega: "+ω", torque: "+T", flow: "电 → 机" },
-  2: { label: "正转发电", omega: "+ω", torque: "−T", flow: "机 → 电" },
-  3: { label: "反转电动", omega: "−ω", torque: "−T", flow: "电 → 机" },
-  4: { label: "反转发电", omega: "−ω", torque: "+T", flow: "机 → 电" }
-} as const;
+const circuitSpecs: CircuitSpec[] = [
+  { quadrant: 4, x: 70, y: 42, machine: "G", machineSide: "right", mechanicalPower: "left", emf: "down", voltage: "down", voltageLabel: "V_D", cells: 1, current: "clockwise" },
+  { quadrant: 1, x: 710, y: 42, machine: "M", machineSide: "left", mechanicalPower: "left", emf: "up", voltage: "up", voltageLabel: "V_A", cells: 2, current: "counterclockwise" },
+  { quadrant: 3, x: 70, y: 398, machine: "M", machineSide: "right", mechanicalPower: "right", emf: "down", voltage: "down", voltageLabel: "V_C", cells: 2, current: "counterclockwise" },
+  { quadrant: 2, x: 710, y: 398, machine: "G", machineSide: "left", mechanicalPower: "right", emf: "up", voltage: "up", voltageLabel: "V_B", cells: 1, current: "clockwise" }
+];
 
-function QuadrantCircuit({ x, y, quadrant, active, liveVoltagePositive }: CircuitProps) {
-  const meta = quadrantMeta[quadrant];
-  const currentPositive = quadrant === 1 || quadrant === 4;
-  const voltagePositive = active && liveVoltagePositive !== undefined ? liveVoltagePositive : quadrant === 1 || quadrant === 2;
-  const motoring = quadrant === 1 || quadrant === 3;
-  const loopPath = currentPositive ? "M 56 92 C 86 32, 184 32, 214 92" : "M 214 92 C 184 32, 86 32, 56 92";
+const quadrantLabels: Record<Quadrant, string> = {
+  1: "正转电动",
+  2: "正转发电",
+  3: "反转电动",
+  4: "反转发电"
+};
+
+function Battery({ x, cells }: { x: number; cells: 1 | 2 }) {
+  const plates = cells === 1 ? [104] : [91, 125];
+  return (
+    <g aria-label={`${cells}节直流电源`}>
+      <line x1={x} y1="60" x2={x} y2={plates[0] - 12} className="figure312-wire" />
+      {plates.map((center, index) => (
+        <g key={center}>
+          <line x1={x - 25} y1={center - 5} x2={x + 25} y2={center - 5} className="figure312-wire" />
+          <line x1={x - 14} y1={center + 7} x2={x + 14} y2={center + 7} className="figure312-wire" />
+          {index < plates.length - 1 ? <line x1={x} y1={center + 7} x2={x} y2={plates[index + 1] - 5} className="figure312-wire" /> : null}
+        </g>
+      ))}
+      <line x1={x} y1={plates[plates.length - 1] + 7} x2={x} y2="180" className="figure312-wire" />
+    </g>
+  );
+}
+
+function Figure312Circuit({ spec, active }: { spec: CircuitSpec; active: boolean }) {
+  const machineX = spec.machineSide === "right" ? 218 : 42;
+  const sourceX = spec.machineSide === "right" ? 28 : 232;
+  const voltageX = spec.machineSide === "right" ? -8 : 268;
+  const voltageLabelX = spec.machineSide === "right" ? -18 : 280;
+  const loopX = spec.machineSide === "right" ? 126 : 134;
+  const currentPath = spec.current === "clockwise"
+    ? `M ${loopX - 8} 78 A 43 43 0 1 1 ${loopX - 40} 139`
+    : `M ${loopX + 8} 78 A 43 43 0 1 0 ${loopX + 40} 139`;
+  const mechanicalPowerPath = spec.mechanicalPower === "left" ? "M 160 28 H 74" : "M 82 28 H 168";
+  const emfPath = spec.emf === "up" ? `M ${machineX} 149 V 91` : `M ${machineX} 91 V 149`;
+  const voltagePath = spec.voltage === "up" ? `M ${voltageX} 154 V 84` : `M ${voltageX} 84 V 154`;
 
   return (
-    <g transform={`translate(${x} ${y})`} aria-label={`第${quadrant}象限${meta.label}`}>
-      <rect width="250" height="164" rx="5" className={active ? "advanced-book-panel is-active" : "advanced-book-panel"} />
-      <text x="14" y="23" className="advanced-book-index">{quadrant}</text>
-      <text x="125" y="24" textAnchor="middle" className="advanced-book-heading">{meta.label}</text>
+    <g transform={`translate(${spec.x} ${spec.y})`} aria-label={`第${spec.quadrant}象限${quadrantLabels[spec.quadrant]}`}>
+      <text x="121" y="15" textAnchor="middle" className="figure312-machine-letter">{spec.machine}</text>
+      <path d={mechanicalPowerPath} className="figure312-motion" markerEnd="url(#figure312-gray-arrow)" aria-label={`机械功率流向${spec.mechanicalPower === "left" ? "左" : "右"}`} />
+      <line x1={sourceX} y1="60" x2={machineX} y2="60" className="figure312-wire" />
+      <line x1={sourceX} y1="180" x2={machineX} y2="180" className="figure312-wire" />
+      <Battery x={sourceX} cells={spec.cells} />
+      <line x1={machineX} y1="60" x2={machineX} y2="75" className="figure312-wire" />
+      <circle cx={machineX} cy="120" r="45" className="figure312-machine" />
+      <line x1={machineX} y1="165" x2={machineX} y2="180" className="figure312-wire" />
+      <circle cx={machineX + (spec.machineSide === "right" ? 13 : -13)} cy="68" r="4" className="figure312-terminal" />
+      <rect x={machineX - 5} y="172" width="10" height="8" className="figure312-brush" />
+      <path d={emfPath} className="figure312-emf" markerEnd="url(#figure312-black-arrow)" />
+      <text x={machineX + (spec.machineSide === "right" ? 18 : -18)} y="124" textAnchor="middle" className="figure312-symbol">E</text>
+      <path d={currentPath} className={active ? "figure312-current is-active" : "figure312-current"} markerEnd="url(#figure312-black-arrow)" />
+      <text x={loopX} y="118" textAnchor="middle" className="figure312-symbol">I</text>
+      <path d={voltagePath} className="figure312-voltage" markerEnd="url(#figure312-black-arrow)" />
+      <text x={voltageLabelX} y="125" textAnchor="middle" className="figure312-voltage-label">V<tspan baselineShift="sub" fontSize="12">{spec.voltageLabel.slice(-1)}</tspan></text>
+    </g>
+  );
+}
 
-      <line x1="34" y1="46" x2="34" y2="130" className="advanced-book-wire" />
-      <line x1="34" y1="46" x2="190" y2="46" className="advanced-book-wire" />
-      <line x1="34" y1="130" x2="190" y2="130" className="advanced-book-wire" />
-      <line x1="23" y1="78" x2="45" y2="78" className="advanced-book-wire" />
-      <line x1="18" y1="91" x2="50" y2="91" className="advanced-book-wire" />
-      <circle cx="190" cy="88" r="36" className="advanced-book-machine" />
-      <line x1="190" y1="46" x2="190" y2="52" className="advanced-book-wire" />
-      <line x1="190" y1="124" x2="190" y2="130" className="advanced-book-wire" />
-      <circle cx="190" cy="48" r="3" className="advanced-book-terminal" />
-      <path d={voltagePositive ? "M 8 112 V 58" : "M 8 58 V 112"} className="advanced-book-voltage" markerEnd="url(#advanced-red-arrow)" />
-      <path d={currentPositive ? "M 190 108 V 66" : "M 190 66 V 108"} className="advanced-book-emf" markerEnd="url(#advanced-black-arrow)" />
-      <path d={loopPath} className={active ? "advanced-book-current is-active" : "advanced-book-current"} markerEnd="url(#advanced-red-arrow)" />
-      <path d={motoring ? "M 82 144 H 146" : "M 146 144 H 82"} className="advanced-book-power" markerEnd="url(#advanced-black-arrow)" />
+function QuadrantMap({ active, pulse }: { active: Quadrant | null; pulse: number }) {
+  const circles: Array<{ quadrant: Quadrant; x: number; y: number }> = [
+    { quadrant: 4, x: 486, y: 276 },
+    { quadrant: 1, x: 554, y: 276 },
+    { quadrant: 3, x: 486, y: 344 },
+    { quadrant: 2, x: 554, y: 344 }
+  ];
 
-      <text x="58" y="84" className="advanced-book-label">V</text>
-      <text x="184" y="94" textAnchor="middle" className="advanced-book-label">E</text>
-      <text x="126" y="70" textAnchor="middle" className="advanced-book-small">I</text>
-      <text x="114" y="159" textAnchor="middle" className="advanced-book-small">{meta.flow}</text>
-      <text x="230" y="83" textAnchor="middle" className="advanced-book-small">{meta.omega}</text>
-      <text x="230" y="102" textAnchor="middle" className="advanced-book-small">{meta.torque}</text>
+  return (
+    <g aria-label="教材图3.12中心转矩转速象限框">
+      <line x1="36" y1="310" x2="1004" y2="310" className="figure312-axis" markerEnd="url(#figure312-black-arrow)" />
+      <line x1="520" y1="574" x2="520" y2="46" className="figure312-axis" markerEnd="url(#figure312-black-arrow)" />
+      <text x="526" y="33" className="figure312-axis-label">转矩</text>
+      <text x="982" y="298" className="figure312-axis-label">转速</text>
+      <rect x="444" y="234" width="152" height="152" className="figure312-quadrant-frame" />
+      <text x="449" y="249" className="figure312-corner">D</text>
+      <text x="584" y="249" className="figure312-corner">A</text>
+      <text x="449" y="382" className="figure312-corner">C</text>
+      <text x="584" y="382" className="figure312-corner">B</text>
+      {circles.map(({ quadrant, x, y }) => (
+        <g key={quadrant}>
+          <circle cx={x} cy={y} r={quadrant === active ? 21 + pulse : 20} className={quadrant === active ? "figure312-quadrant-number is-active" : "figure312-quadrant-number"} />
+          <text x={x} y={y + 6} textAnchor="middle" className="figure312-quadrant-text">{quadrant}</text>
+        </g>
+      ))}
     </g>
   );
 }
@@ -63,16 +122,15 @@ export default function FourQuadrantDemo() {
   const { time, reset } = useDemoClock(playing, 1);
   const state = fourQuadrantOperatingPoint({ omega, torque, motorConstant, resistance });
   const onBoundary = Math.abs(omega) < 1e-6 || Math.abs(torque) < 1e-6;
-  const pointX = 520 + (omega / 160) * 106;
-  const pointY = 310 - (torque / 120) * 106;
   const regenerated = !state.motoring && state.terminalPower < 0;
+  const activeQuadrant: Quadrant | null = onBoundary ? null : state.quadrant;
   const status = onBoundary
-    ? "ω=0 或 T=0：工作点在象限边界，机械转换功率 Tω=0"
+    ? "ω=0 或 T=0：工作点位于象限边界，机械转换功率 Tω=0"
     : state.motoring
-    ? `${state.label}：Tω>0，电能转换为机械能`
-    : regenerated
-      ? `${state.label}：Tω<0，且 VI<0，电能回馈电源`
-      : `${state.label}：Tω<0，正在电磁制动；铜耗使端口尚未回馈`;
+      ? `${state.label}：Tω>0，电能转换为机械能`
+      : regenerated
+        ? `${state.label}：Tω<0 且 VI<0，电能回馈电源`
+        : `${state.label}：Tω<0，正在制动；铜耗使端口尚未回馈`;
 
   const handleReset = () => {
     reset();
@@ -103,47 +161,18 @@ export default function FourQuadrantDemo() {
         </>
       }
     >
-      <svg className="advanced-book-svg" viewBox="0 0 1040 650" role="img" aria-label="教材图3.12风格的直流电机四象限运行动态图">
+      <svg className="advanced-book-svg figure312-svg" viewBox="0 0 1040 650" role="img" aria-label="严格按教材图3.12布局绘制的直流电机四象限运行图">
         <defs>
-          <marker id="advanced-black-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 Z" className="advanced-book-arrow-head" />
+          <marker id="figure312-black-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 Z" className="figure312-black-arrow-head" />
           </marker>
-          <marker id="advanced-red-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 Z" className="advanced-book-arrow-head advanced-book-arrow-head--red" />
+          <marker id="figure312-gray-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 Z" className="figure312-gray-arrow-head" />
           </marker>
         </defs>
-
-        <text x="520" y="30" textAnchor="middle" className="advanced-book-title">图 3.12  直流电机四象限运行</text>
-        <QuadrantCircuit x={40} y={54} quadrant={4} active={state.quadrant === 4} liveVoltagePositive={state.voltage >= 0} />
-        <QuadrantCircuit x={750} y={54} quadrant={1} active={state.quadrant === 1} liveVoltagePositive={state.voltage >= 0} />
-        <QuadrantCircuit x={40} y={430} quadrant={3} active={state.quadrant === 3} liveVoltagePositive={state.voltage >= 0} />
-        <QuadrantCircuit x={750} y={430} quadrant={2} active={state.quadrant === 2} liveVoltagePositive={state.voltage >= 0} />
-
-        <g aria-label="转矩转速象限图">
-          <line x1="322" y1="310" x2="718" y2="310" className="advanced-book-axis" markerEnd="url(#advanced-black-arrow)" />
-          <line x1="520" y1="414" x2="520" y2="184" className="advanced-book-axis" markerEnd="url(#advanced-black-arrow)" />
-          <rect x="402" y="192" width="236" height="236" className="advanced-book-quadrant-box" />
-          <line x1="402" y1="310" x2="638" y2="310" className="advanced-book-guide" />
-          <line x1="520" y1="192" x2="520" y2="428" className="advanced-book-guide" />
-          <text x="700" y="335" className="advanced-book-label">转速 ω</text>
-          <text x="538" y="198" className="advanced-book-label">转矩 T</text>
-          <text x="579" y="238" textAnchor="middle" className="advanced-book-index">1</text>
-          <text x="579" y="390" textAnchor="middle" className="advanced-book-index">2</text>
-          <text x="461" y="390" textAnchor="middle" className="advanced-book-index">3</text>
-          <text x="461" y="238" textAnchor="middle" className="advanced-book-index">4</text>
-          <line x1={pointX} y1={pointY} x2={pointX} y2="310" className="advanced-book-live-guide" />
-          <line x1="520" y1={pointY} x2={pointX} y2={pointY} className="advanced-book-live-guide" />
-          <circle cx={pointX} cy={pointY} r={7 + Math.sin(time * 5) * 1.2} className="advanced-book-live-point" />
-          <text x={pointX + 12} y={pointY - 10} className="advanced-book-small">运行点</text>
-        </g>
-
-        <g transform="translate(352 458)" aria-label="一致的物理方程">
-          <rect width="336" height="120" rx="5" className="advanced-book-equation-panel" />
-          <text x="168" y="28" textAnchor="middle" className="advanced-book-heading">同一组量必须同时满足</text>
-          <text x="168" y="57" textAnchor="middle" className="advanced-book-equation">E=kω　 I=T/k</text>
-          <text x="168" y="84" textAnchor="middle" className="advanced-book-equation">V=E+IR　 Pmech=Tω</text>
-          <text x="168" y="107" textAnchor="middle" className="advanced-book-small">播放：观察当前象限与能量方向</text>
-        </g>
+        <QuadrantMap active={activeQuadrant} pulse={playing ? Math.sin(time * 5) * 1.2 : 0} />
+        {circuitSpecs.map((spec) => <Figure312Circuit key={spec.quadrant} spec={spec} active={!onBoundary && state.quadrant === spec.quadrant} />)}
+        <text x="520" y="632" textAnchor="middle" className="figure312-caption">图 3.12　直流电机在转矩-转速平面上的四象限运行</text>
       </svg>
     </DemoFrame>
   );
